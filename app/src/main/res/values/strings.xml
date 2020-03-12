@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">localization-app</string>
-    <string name="communicate">Communicate</string>
+    <string name="info">Info</string>
+    <string name="legend">Legende</string>
 </resources>
