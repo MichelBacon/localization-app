@@ -9,7 +9,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Info"></activity>
+        <activity
+            android:name=".Legend"
+            android:parentActivityName=".MainActivity"
+            android:label="@string/legend"/>
+        <activity
+            android:name=".Info"
+            android:parentActivityName=".MainActivity"
+            android:label="@string/info"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
