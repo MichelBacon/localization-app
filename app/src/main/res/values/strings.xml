@@ -1,5 +1,15 @@
 <resources>
-    <string name="app_name">localization-app</string>
+    <string name="app_name">CBA Localisation</string>
     <string name="info">Info</string>
-    <string name="legend">Legende</string>
+    <string name="legend">Légende</string>
+    <string name="voici_la_page_des_informations">Voici la page des informations</string>
+    <string name="title_activity_admin_login">Mode administrateur</string>
+    <string name="prompt_email">Nom d\'utilisateur</string>
+    <string name="prompt_password">Mot de passe</string>
+    <string name="action_sign_in">Connexion</string>
+    <string name="action_sign_in_short">Connexion</string>
+    <string name="welcome">"Bonjour !"</string>
+    <string name="invalid_username">Nom d\'utilisateur invalide</string>
+    <string name="invalid_password">Le mot de passe doit être au moins de 5 caractère</string>
+    <string name="login_failed">"Connexion échoué"</string>
 </resources>

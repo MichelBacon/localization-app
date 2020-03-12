@@ -17,8 +17,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toast.makeText(MainActivity.this, "Firebase connection Sucess", Toast.LENGTH_LONG).show();
-
+      
         PhotoView photoView = findViewById(R.id.photo_view);
         photoView.setImageResource(R.drawable.image);
     }
@@ -34,18 +33,18 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_info:
-                showWindow("info");
+                showActivity(Info.class);
                 return false;
             case R.id.nav_legend:
-                showWindow("legend");
+                showActivity(Legend.class);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    private void showWindow(String windowName) {
-        Intent myIntent = new Intent(MainActivity.this, Info.class);
+    private void showActivity(Class className) {
+        Intent myIntent = new Intent(MainActivity.this, className);
         startActivity(myIntent);
     }
 }

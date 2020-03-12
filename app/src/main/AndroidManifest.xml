@@ -9,7 +9,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Info"></activity>
+        <activity
+            android:name=".ui.login.AdminLogin"
+            android:label="@string/title_activity_admin_login"
+            android:parentActivityName=".Info">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cegepba.localization_app.Info" />
+        </activity>
+        <activity
+            android:name=".Legend"
+            android:label="@string/legend"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".Info"
+            android:label="@string/info"
+            android:parentActivityName=".MainActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
