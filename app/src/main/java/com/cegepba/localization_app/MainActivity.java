@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
+import com.github.chrisbanes.photoview.PhotoView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -16,6 +17,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+      
+        PhotoView photoView = findViewById(R.id.photo_view);
+        photoView.setImageResource(R.drawable.image);
     }
 
     @Override
