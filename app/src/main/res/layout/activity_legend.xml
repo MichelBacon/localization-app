@@ -6,4 +6,49 @@
     android:layout_height="match_parent"
     tools:context=".Legend">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/legendLayout"
+        android:layout_width="349dp"
+        android:layout_height="517dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/text_doctor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Médecine"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.16"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.054" />
+
+        <TextView
+            android:id="@+id/text_doctor2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Informatique"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/text_doctor"
+            app:layout_constraintTop_toBottomOf="@+id/text_doctor"
+            app:layout_constraintVertical_bias="0.037" />
+
+        <TextView
+            android:id="@+id/text_doctor3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Administration"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/text_doctor"
+            app:layout_constraintTop_toBottomOf="@+id/text_doctor"
+            app:layout_constraintVertical_bias="0.117" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
