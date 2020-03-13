@@ -25,7 +25,7 @@ public class Info extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-    Intent myIntent = new Intent(Info.this, AdminLogin.class);
+        Intent myIntent = new Intent(Info.this, AdminLogin.class);
         startActivity(myIntent);
     }
 }
