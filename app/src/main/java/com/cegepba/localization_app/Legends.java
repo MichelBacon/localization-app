@@ -1,10 +1,12 @@
 package com.cegepba.localization_app;
 
+//TODO reclasser les classes (dans des dossiers)
+
 public class Legends {
     private String Color;
     private String Name;
-
-    public Legends(){};
+    
+    public Legends(){}
 
     public Legends(String color, String name) {
         this.Color = color;

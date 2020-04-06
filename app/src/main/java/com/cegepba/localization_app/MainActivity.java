@@ -2,7 +2,6 @@ package com.cegepba.localization_app;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -13,13 +12,20 @@ import com.github.chrisbanes.photoview.PhotoView;
 
 public class MainActivity extends AppCompatActivity {
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-      
-        PhotoView photoView = findViewById(R.id.photo_view);
-        photoView.setImageResource(R.drawable.image);
+
+        try {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_main);
+
+            PhotoView photoView = findViewById(R.id.photo_view);
+            photoView.setImageResource(R.drawable.image);
+        }
+        catch (Exception ex) {
+            Toast.makeText(this, ex.getMessage(),Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
