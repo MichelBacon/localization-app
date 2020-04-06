@@ -5,7 +5,7 @@ package com.cegepba.localization_app;
 public class Legends {
     private String Color;
     private String Name;
-
+    
     public Legends(){}
 
     public Legends(String color, String name) {
