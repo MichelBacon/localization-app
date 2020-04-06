@@ -1,6 +1,6 @@
-package com.cegepba.localization_app.data;
+package com.cegepba.localization_app.Login.data;
 
-import com.cegepba.localization_app.data.model.LoggedInUser;
+import com.cegepba.localization_app.Login.data.model.LoggedInUser;
 
 import java.io.IOException;
 

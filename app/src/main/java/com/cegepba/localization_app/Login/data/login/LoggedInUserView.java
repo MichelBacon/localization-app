@@ -1,4 +1,4 @@
-package com.cegepba.localization_app.ui.login;
+package com.cegepba.localization_app.Login.data.login;
 
 /**
  * Class exposing authenticated user details to the UI.

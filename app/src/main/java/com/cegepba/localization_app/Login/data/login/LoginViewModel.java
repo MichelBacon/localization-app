@@ -1,4 +1,4 @@
-package com.cegepba.localization_app.ui.login;
+package com.cegepba.localization_app.Login.data.login;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel;
 
 import android.util.Patterns;
 
-import com.cegepba.localization_app.data.LoginRepository;
-import com.cegepba.localization_app.data.Result;
-import com.cegepba.localization_app.data.model.LoggedInUser;
+import com.cegepba.localization_app.Login.data.LoginRepository;
+import com.cegepba.localization_app.Login.data.Result;
+import com.cegepba.localization_app.Login.data.model.LoggedInUser;
 import com.cegepba.localization_app.R;
 
 public class LoginViewModel extends ViewModel {

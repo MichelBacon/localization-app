@@ -1,4 +1,4 @@
-package com.cegepba.localization_app.data;
+package com.cegepba.localization_app.Login.data;
 
 /**
  * A generic class that holds a result success w/ data or an error exception.

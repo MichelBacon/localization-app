@@ -1,4 +1,4 @@
-package com.cegepba.localization_app.ui.login;
+package com.cegepba.localization_app.Login.data.login;
 
 import android.app.Activity;
 
@@ -23,8 +23,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cegepba.localization_app.R;
-import com.cegepba.localization_app.ui.login.LoginViewModel;
-import com.cegepba.localization_app.ui.login.LoginViewModelFactory;
 
 public class AdminLogin extends AppCompatActivity {
 

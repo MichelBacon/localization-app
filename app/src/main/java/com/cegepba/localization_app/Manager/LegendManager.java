@@ -1,10 +1,13 @@
-package com.cegepba.localization_app;
+package com.cegepba.localization_app.Manager;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.cegepba.localization_app.Model.Legends;
+import com.cegepba.localization_app.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;

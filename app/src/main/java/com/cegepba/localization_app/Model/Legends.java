@@ -1,6 +1,4 @@
-package com.cegepba.localization_app;
-
-//TODO reclasser les classes (dans des dossiers)
+package com.cegepba.localization_app.Model;
 
 public class Legends {
     private String Color;

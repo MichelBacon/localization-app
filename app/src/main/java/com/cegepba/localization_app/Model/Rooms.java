@@ -1,4 +1,4 @@
-package com.cegepba.localization_app;
+package com.cegepba.localization_app.Model;
 
 import com.google.firebase.firestore.DocumentReference;
 

@@ -1,11 +1,11 @@
-package com.cegepba.localization_app.ui.login;
+package com.cegepba.localization_app.Login.data.login;
 
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.annotation.NonNull;
 
-import com.cegepba.localization_app.data.LoginDataSource;
-import com.cegepba.localization_app.data.LoginRepository;
+import com.cegepba.localization_app.Login.data.LoginDataSource;
+import com.cegepba.localization_app.Login.data.LoginRepository;
 
 /**
  * ViewModel provider factory to instantiate LoginViewModel.

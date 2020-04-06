@@ -1,6 +1,6 @@
-package com.cegepba.localization_app.data;
+package com.cegepba.localization_app.Login.data;
 
-import com.cegepba.localization_app.data.model.LoggedInUser;
+import com.cegepba.localization_app.Login.data.model.LoggedInUser;
 
 /**
  * Class that requests authentication and user information from the remote data source and

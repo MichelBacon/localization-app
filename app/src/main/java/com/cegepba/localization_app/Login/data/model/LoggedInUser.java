@@ -1,4 +1,4 @@
-package com.cegepba.localization_app.data.model;
+package com.cegepba.localization_app.Login.data.model;
 
 /**
  * Data class that captures user information for logged in users retrieved from LoginRepository
