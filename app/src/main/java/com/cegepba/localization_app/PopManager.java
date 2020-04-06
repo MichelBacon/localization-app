@@ -16,7 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-public class Pop extends AppCompatActivity {
+public class PopManager extends AppCompatActivity {
 
     private FirebaseFirestore firebaseFirestore;
 

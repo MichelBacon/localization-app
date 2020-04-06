@@ -1,7 +1,6 @@
 package com.cegepba.localization_app;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -14,14 +13,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 
-public class Legend extends AppCompatActivity {
+public class LegendManager extends AppCompatActivity {
 
     private FirebaseFirestore firebaseFirestore;
     private TextView textViewColor;

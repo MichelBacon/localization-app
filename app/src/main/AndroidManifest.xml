@@ -9,23 +9,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Pop"
+        <activity android:name=".PopManager"
             android:theme="@style/AppTheme.CustomTheme"
             ></activity>
         <activity
             android:name=".ui.login.AdminLogin"
             android:label="@string/title_activity_admin_login"
-            android:parentActivityName=".Info">
+            android:parentActivityName=".InfoManager">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.cegepba.localization_app.Info" />
+                android:value="com.cegepba.localization_app.InfoManager" />
         </activity>
         <activity
-            android:name=".Legend"
+            android:name=".LegendManager"
             android:label="@string/legend"
             android:parentActivityName=".MainActivity" />
         <activity
-            android:name=".Info"
+            android:name=".InfoManager"
             android:label="@string/info"
             android:parentActivityName=".MainActivity" />
         <activity android:name=".MainActivity">

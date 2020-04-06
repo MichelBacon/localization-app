@@ -7,9 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.cegepba.localization_app.ui.login.AdminLogin;
-
-public class Info extends AppCompatActivity implements View.OnClickListener {
+public class InfoManager extends AppCompatActivity implements View.OnClickListener {
 
     Button btnAdmin;
     @Override
@@ -19,13 +17,13 @@ public class Info extends AppCompatActivity implements View.OnClickListener {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         btnAdmin = findViewById(R.id.button);
-        btnAdmin.setOnClickListener(Info.this);
+        btnAdmin.setOnClickListener(InfoManager.this);
     }
 
 
     @Override
     public void onClick(View v) {
-        Intent myIntent = new Intent(Info.this, Pop.class);
+        Intent myIntent = new Intent(InfoManager.this, PopManager.class);
         startActivity(myIntent);
     }
 }
