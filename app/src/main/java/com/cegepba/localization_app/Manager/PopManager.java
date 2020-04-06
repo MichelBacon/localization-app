@@ -3,8 +3,13 @@ package com.cegepba.localization_app.Manager;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.cegepba.localization_app.Model.Rooms;
@@ -18,7 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-public class PopManager extends AppCompatActivity {
+public class PopManager extends Activity {
 
     private FirebaseFirestore firebaseFirestore;
 
