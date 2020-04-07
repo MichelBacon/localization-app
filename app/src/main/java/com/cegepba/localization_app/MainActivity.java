@@ -10,10 +10,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
 import com.cegepba.localization_app.Manager.InfoManager;
 import com.cegepba.localization_app.Manager.LegendManager;
-
+import com.estimote.coresdk.common.requirements.SystemRequirementsChecker;
+import com.estimote.coresdk.service.BeaconManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,15 +24,18 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonFloors3;
     private Button buttonFloors4;
     private Button buttonFloors5;
-
+    private BeaconManager beaconManager;
     Map map;
     //endregion
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         map = findViewById(R.id.map);
+        beaconManager = new BeaconManager(getApplicationContext());
 
         buttonFloors1 = findViewById(R.id.btnFloor1);
         buttonFloors2 = findViewById(R.id.btnFloor2);
@@ -43,7 +46,13 @@ public class MainActivity extends AppCompatActivity {
         setListener2();
         setListener3();
         setListener4();
-        setListener5();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        SystemRequirementsChecker.checkWithDefaultDialogs(this);
     }
 
     @Override
