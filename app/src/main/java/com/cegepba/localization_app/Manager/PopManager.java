@@ -1,17 +1,12 @@
 package com.cegepba.localization_app.Manager;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.cegepba.localization_app.Model.Rooms;
 import com.cegepba.localization_app.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,6 +24,7 @@ public class PopManager extends Activity {
 
     private TextView roomName;
     private TextView descriptionText;
+    private ImageView closeButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,18 +33,30 @@ public class PopManager extends Activity {
 
         firebaseFirestore = FirebaseFirestore.getInstance();
 
+        roomName = findViewById(R.id.roomId);
+        descriptionText = findViewById(R.id.descriptionText);
+        closeButton = findViewById(R.id.x_button);
+
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        setPopWindowSize();
+        setTextView();
+    }
+
+    private void setPopWindowSize()
+    {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
         int width = displayMetrics.widthPixels;
         int height = displayMetrics.heightPixels;
 
-        getWindow().setLayout((int)(width*.8),(int)(height*.6));
-
-        roomName = findViewById(R.id.roomId);
-        descriptionText = findViewById(R.id.descriptionText);
-
-        setTextView();
+        getWindow().setLayout((int)(width*.8),(int)(height*.4));
     }
 
     private void setTextView() {

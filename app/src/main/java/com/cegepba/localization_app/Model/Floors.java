@@ -4,7 +4,7 @@ public class Floors {
 
     private String FloorNum;
 
-    public Floors(){};
+    public Floors(){}
 
     public Floors(String floorNum) {
         FloorNum = floorNum;

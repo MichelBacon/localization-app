@@ -49,7 +49,7 @@ public class Rooms {
         this.beaconId = beaconId;
     }
 
-    public Rooms(){};
+    public Rooms(){}
 
     public Rooms(String name, DocumentReference legendId, /*Floors floor,*/ String description, String beaconId) {
         this.name = name;
