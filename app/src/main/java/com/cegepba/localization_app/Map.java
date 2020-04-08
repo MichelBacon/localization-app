@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -29,6 +30,8 @@ public class Map extends View {
     private float mScaleFactor = 1.0f;
     private final static float mMinZoom = 1.0f;
     private final static float mMaxZoom = 5.0f;
+    private float canvasWidth;
+    private float canvasHeight;
 
     public Map(Context context) {
         super(context);
@@ -54,14 +57,23 @@ public class Map extends View {
         super.onDraw(canvas);
 
         drawBitmap(canvas);
+        drawText(canvas);
     }
+
     public void drawBitmap(Canvas canvas){
         canvas.save();
         canvas.translate(mPositionX,mPositionY);
         canvas.scale(mScaleFactor, mScaleFactor);
         canvas.drawBitmap(bitmap, 0, 0, null);
         canvas.restore();
+
+        canvasWidth = 2606;
+        canvasHeight = 1967;
     }
+
+    public void drawText(Canvas canvas) {
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event){
         mScaleDetector.onTouchEvent(event);
@@ -75,11 +87,24 @@ public class Map extends View {
                 float nX = event.getX();
                 float nY = event.getY();
 
-                mPositionX += nX - refX;
-                mPositionY += nY - refY;
+                if(mPositionX + (nX - refX) <= 0) {
+                    if(mPositionX + (nX - refX) >= (canvasWidth*-1)) {
+                        mPositionX += nX - refX;
+                    }
+                }
+
+                if(mPositionY + (nY - refY) <= 0) {
+                    if(mPositionY + (nY - refY) >= (canvasHeight*-1)) {
+                        mPositionY += nY - refY;
+                    }
+                }
 
                 refX = nX;
                 refY = nY;
+
+                Log.e("TESTX","x : " + mPositionX);
+                Log.e("TESTY","y : " + mPositionY);
+                Log.e("Scale", "scaleFactor" + mScaleFactor);
 
                 invalidate();
 
