@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Matrix;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.DragEvent;
@@ -44,9 +45,34 @@ public class MainActivity extends AppCompatActivity {
         photoView.setOnViewDragListener(new OnViewDragListener() {
             @Override
             public void onDrag(float dx, float dy) {
-                Log.e("DRAAAAAGGGG!!!!!", "onDrag: dy= " + photoView.getX());
-                location_user.setX(location_user.getX() + dx);
-                location_user.setY(location_user.getY() + dy);
+                Matrix imageMatrix = photoView.getImageMatrix();
+
+                float[] matrixValues = new float[10];
+
+                imageMatrix.getValues(matrixValues);
+
+                float scale = photoView.getScale() * (float)2.2;
+
+                float xValue = matrixValues[2] / scale;
+                float yValue = matrixValues[5] / scale;
+
+                //Note : il calcule leur zoom scale avec ça
+                //(float) Math.sqrt((float) Math.pow(xValue, 2) + (float) Math.pow(yValue, 2));
+
+                Log.e("DRAAAAAGGGG!!!!!", "onDrag: dy= " + xValue + " " + yValue);
+                Log.e("Zoom", "onZoom:" + photoView.getScale());
+                Log.e("Zoom", "onZoom:" + scale);
+
+
+                if(xValue != 0.0) {
+                    if(xValue > -281.87830) {
+                        location_user.setX(location_user.getX() + dx);
+                    }
+                }
+
+                if(yValue != 0.0) {
+                    location_user.setY(location_user.getY() + dy);
+                }
             }
         });
     }
