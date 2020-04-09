@@ -18,6 +18,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 
+//TODO draw text with color (textcolor = color)
+
 public class LegendManager extends AppCompatActivity {
 
     private FirebaseFirestore firebaseFirestore;
