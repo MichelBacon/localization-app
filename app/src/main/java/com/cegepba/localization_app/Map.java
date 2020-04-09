@@ -4,18 +4,16 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
 import androidx.annotation.Nullable;
-
-import com.google.android.gms.common.internal.service.Common;
+import androidx.core.content.ContextCompat;
 
 //import com.hazem.coloringforkids.commom.Common;
 //import com.hazem.coloringforkids.utils.FloodFill;
@@ -23,7 +21,8 @@ import com.google.android.gms.common.internal.service.Common;
 
 public class Map extends View {
 
-    private Bitmap bitmap;
+    private Bitmap bitmapMap;
+    private Bitmap bitmapUserPosition;
     private float mPositionX,mPositionY;
     private float refX,refY;
     private ScaleGestureDetector mScaleDetector;
@@ -39,7 +38,8 @@ public class Map extends View {
     public Map(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
-        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.image1);
+        bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.image1);
+        bitmapUserPosition = BitmapFactory.decodeResource(getResources(), R.drawable.location);
     }
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener{
@@ -57,18 +57,19 @@ public class Map extends View {
         super.onDraw(canvas);
 
         drawBitmap(canvas);
+        drawUserPositionBitmap(canvas);
         drawText(canvas);
-    }
-
-    public void drawBitmap(Canvas canvas){
-        canvas.save();
-        canvas.translate(mPositionX,mPositionY);
-        canvas.scale(mScaleFactor, mScaleFactor);
-        canvas.drawBitmap(bitmap, 0, 0, null);
-        canvas.restore();
 
         canvasWidth = 2606 * mScaleFactor;
         canvasHeight = 1967 * mScaleFactor;
+    }
+
+    public void drawBitmap(Canvas canvas) {
+        canvas.save();
+        canvas.translate(mPositionX,mPositionY);
+        canvas.scale(mScaleFactor, mScaleFactor);
+        canvas.drawBitmap(bitmapMap, 0, 0, null);
+        canvas.restore();
     }
 
     public void drawText(Canvas canvas) {
@@ -77,6 +78,15 @@ public class Map extends View {
         canvas.drawText(Float.toString(mPositionX), 100,100, paint);
         canvas.drawText(Float.toString(mPositionY), 100,200, paint);
         canvas.drawText(Float.toString(mScaleFactor), 100,300, paint);
+    }
+
+    public void drawUserPositionBitmap(Canvas canvas) {
+        canvas.save();
+        canvas.translate(mPositionX,mPositionY);
+        canvas.scale(mScaleFactor/3, mScaleFactor/3);
+        //TODO position bitmap = position user
+        canvas.drawBitmap(bitmapUserPosition, 4000, 4000, null);
+        canvas.restore();
     }
 
     @Override
