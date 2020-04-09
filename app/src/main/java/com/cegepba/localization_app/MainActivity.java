@@ -11,6 +11,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.cegepba.localization_app.Manager.InfoManager;
+import com.cegepba.localization_app.Manager.LegendManager;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,10 +57,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_info:
-                showActivity(Info.class);
+                showActivity(InfoManager.class);
                 return false;
             case R.id.nav_legend:
-                showActivity(Legend.class);
+                showActivity(LegendManager.class);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -11,6 +11,8 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import androidx.annotation.Nullable;
 
+import com.cegepba.localization_app.R;
+
 //import com.hazem.coloringforkids.commom.Common;
 //import com.hazem.coloringforkids.utils.FloodFill;
 
