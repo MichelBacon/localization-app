@@ -16,8 +16,6 @@ import com.estimote.coresdk.common.requirements.SystemRequirementsChecker;
 import com.estimote.coresdk.service.BeaconManager;
 
 public class MainActivity extends AppCompatActivity {
-
-
     //region private variable
     private Button buttonFloors1;
     private Button buttonFloors2;

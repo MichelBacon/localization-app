@@ -43,12 +43,27 @@ public class MyApplication extends Application {
             }
         });
 
+        beaconManager.setMonitoringListener(new BeaconManager.BeaconMonitoringListener() {
+            @Override
+            public void onEnteredRegion(BeaconRegion region, List<Beacon> beacons) {
+                showNotification(
+                        "Your gate closes in 47 minutes.",
+                        "Current security wait time is 15 minutes, "
+                                + "and it's a 5 minute walk from security to the gate. "
+                                + "Looks like you've got plenty of time!");
+            }
+            @Override
+            public void onExitedRegion(BeaconRegion region) {
+                // could add an "exit" notification too if you want (-:
+            }
+        });
+
         beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
             @Override
             public void onServiceReady() {
                 beaconManager.startMonitoring(new BeaconRegion(
                         "monitored region",
-                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
+                        UUID.fromString("211d09865dba48d11d037c9611d2329"),
                         null, null));
             }
         });
