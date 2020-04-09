@@ -12,4 +12,15 @@
     <string name="invalid_username">Nom d\'utilisateur invalide</string>
     <string name="invalid_password">Le mot de passe doit être au moins de 5 caractère</string>
     <string name="login_failed">"Connexion échoué"</string>
+    <string name="_1">1</string>
+    <string name="nbr5">5</string>
+    <string name="nbr4">4</string>
+    <string name="nbr3">3</string>
+    <string name="nbr2">2</string>
+    <string name="nbr1">1</string>
+    <string name="Floor1st">1ère étage</string>
+    <string name="Floor2nd">2ième étage</string>
+    <string name="Floor3rd">3ième étage</string>
+    <string name="Floor4th">4ième étage</string>
+    <string name="Floor5th">5ième étage</string>
 </resources>

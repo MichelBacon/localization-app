@@ -1,4 +1,4 @@
-package com.cegepba.localization_app;
+package com.cegepba.localization_app.Manager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,9 +7,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.cegepba.localization_app.ui.login.AdminLogin;
+import com.cegepba.localization_app.R;
 
-public class Info extends AppCompatActivity implements View.OnClickListener {
+public class InfoManager extends AppCompatActivity implements View.OnClickListener {
 
     Button btnAdmin;
     @Override
@@ -19,13 +19,13 @@ public class Info extends AppCompatActivity implements View.OnClickListener {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         btnAdmin = findViewById(R.id.button);
-        btnAdmin.setOnClickListener(Info.this);
+        btnAdmin.setOnClickListener(InfoManager.this);
     }
 
 
     @Override
     public void onClick(View v) {
-    Intent myIntent = new Intent(Info.this, AdminLogin.class);
+        Intent myIntent = new Intent(InfoManager.this, PopManager.class);
         startActivity(myIntent);
     }
 }
