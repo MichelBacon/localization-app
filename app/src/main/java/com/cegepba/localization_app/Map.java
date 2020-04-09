@@ -5,15 +5,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.VectorDrawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
-
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 //import com.hazem.coloringforkids.commom.Common;
 //import com.hazem.coloringforkids.utils.FloodFill;
@@ -21,20 +17,24 @@ import androidx.core.content.ContextCompat;
 
 public class Map extends View {
 
+    //region private variable
     private Bitmap bitmapMap;
     private Bitmap bitmapUserPosition;
     private float mPositionX,mPositionY;
     private float refX,refY;
     private ScaleGestureDetector mScaleDetector;
     private float mScaleFactor = 1.0f;
-
     private final static float mMinZoom = 0.6f;
     private final static float mMaxZoom = 1.5f;
     private float canvasWidth;
     private float canvasHeight;
+    private int brightness(int pixel) { return (pixel >> 16)& 0xff; }
 
     //private static String[] imageName = {"image1","image2","image3","image4","image5"};
 
+    //endregion
+
+    //region constructor
 
     public Map(Context context) {
         super(context);
@@ -45,6 +45,8 @@ public class Map extends View {
         bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.image1);
         bitmapUserPosition = BitmapFactory.decodeResource(getResources(), R.drawable.location);
     }
+
+    //endregion
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener{
         @Override
@@ -57,9 +59,9 @@ public class Map extends View {
             return true;
         }
     }
-    private int brightness(int pixel) { return (pixel >> 16)& 0xff; }
-    @Override
 
+    //region Draw Items
+    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         drawBitmap(canvas);
@@ -95,6 +97,8 @@ public class Map extends View {
         canvas.restore();
     }
 
+    //endregion
+
     @Override
     public boolean onTouchEvent(MotionEvent event){
         mScaleDetector.onTouchEvent(event);
@@ -108,28 +112,21 @@ public class Map extends View {
                 float nX = event.getX();
                 float nY = event.getY();
 
-
                 if (mPositionX + (nX - refX) <= 0 && mPositionX + (nX - refX) >= (canvasWidth * -1))
                     mPositionX += nX - refX;
 
                 if (mPositionY + (nY - refY) <= 0 && mPositionY + (nY - refY) >= (canvasHeight * -1))
                     mPositionY += nY - refY;
 
-
-
-                //mPositionX += nX - refX;
-                //mPositionY += nY - refY;
-
-
                 refX = nX;
                 refY = nY;
 
                 invalidate();
-
                 break;
         }
         return true;
     }
+
     public void changeFloor(int floorNumber){
          //String name = "R.drawable." + imageName[floorNumber];
          // bitmap = BitmapFactory.decodeResource(getResources(), name);
