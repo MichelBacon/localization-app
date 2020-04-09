@@ -28,8 +28,8 @@ public class Map extends View {
     private float refX,refY;
     private ScaleGestureDetector mScaleDetector;
     private float mScaleFactor = 1.0f;
-    private final static float mMinZoom = 1.0f;
-    private final static float mMaxZoom = 5.0f;
+    private final static float mMinZoom = 0.6f;
+    private final static float mMaxZoom = 1.5f;
     private float canvasWidth;
     private float canvasHeight;
 
@@ -46,7 +46,7 @@ public class Map extends View {
         @Override
         public boolean onScale(ScaleGestureDetector detector){
             mScaleFactor *= detector.getScaleFactor();
-            mScaleFactor = Math.max(mScaleFactor, Math.min(mScaleFactor, mMaxZoom));
+            mScaleFactor = Math.max(mMinZoom, Math.min(mScaleFactor, mMaxZoom));
             invalidate();
             return true;
         }
@@ -67,11 +67,16 @@ public class Map extends View {
         canvas.drawBitmap(bitmap, 0, 0, null);
         canvas.restore();
 
-        canvasWidth = 2606;
-        canvasHeight = 1967;
+        canvasWidth = 2606 * mScaleFactor;
+        canvasHeight = 1967 * mScaleFactor;
     }
 
     public void drawText(Canvas canvas) {
+        Paint paint = new Paint();
+        paint.setTextSize(100);
+        canvas.drawText(Float.toString(mPositionX), 100,100, paint);
+        canvas.drawText(Float.toString(mPositionY), 100,200, paint);
+        canvas.drawText(Float.toString(mScaleFactor), 100,300, paint);
     }
 
     @Override
@@ -87,24 +92,14 @@ public class Map extends View {
                 float nX = event.getX();
                 float nY = event.getY();
 
-                if(mPositionX + (nX - refX) <= 0) {
-                    if(mPositionX + (nX - refX) >= (canvasWidth*-1)) {
-                        mPositionX += nX - refX;
-                    }
-                }
+                if (mPositionX + (nX - refX) <= 0 && mPositionX + (nX - refX) >= (canvasWidth * -1))
+                    mPositionX += nX - refX;
 
-                if(mPositionY + (nY - refY) <= 0) {
-                    if(mPositionY + (nY - refY) >= (canvasHeight*-1)) {
-                        mPositionY += nY - refY;
-                    }
-                }
+                if (mPositionY + (nY - refY) <= 0 && mPositionY + (nY - refY) >= (canvasHeight * -1))
+                    mPositionY += nY - refY;
 
                 refX = nX;
                 refY = nY;
-
-                Log.e("TESTX","x : " + mPositionX);
-                Log.e("TESTY","y : " + mPositionY);
-                Log.e("Scale", "scaleFactor" + mScaleFactor);
 
                 invalidate();
 
