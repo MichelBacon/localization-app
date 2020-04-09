@@ -23,15 +23,19 @@ import com.google.android.gms.common.internal.service.Common;
 
 public class Map extends View {
 
-    private Bitmap bitmap;
+    private static Bitmap bitmap;
     private float mPositionX,mPositionY;
     private float refX,refY;
     private ScaleGestureDetector mScaleDetector;
     private float mScaleFactor = 1.0f;
+
     private final static float mMinZoom = 0.6f;
     private final static float mMaxZoom = 1.5f;
     private float canvasWidth;
     private float canvasHeight;
+
+    //private static String[] imageName = {"image1","image2","image3","image4","image5"};
+
 
     public Map(Context context) {
         super(context);
@@ -45,17 +49,19 @@ public class Map extends View {
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener{
         @Override
         public boolean onScale(ScaleGestureDetector detector){
+
             mScaleFactor *= detector.getScaleFactor();
             mScaleFactor = Math.max(mMinZoom, Math.min(mScaleFactor, mMaxZoom));
             invalidate();
+
             return true;
         }
     }
     private int brightness(int pixel) { return (pixel >> 16)& 0xff; }
     @Override
+
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
         drawBitmap(canvas);
         drawText(canvas);
     }
@@ -92,11 +98,18 @@ public class Map extends View {
                 float nX = event.getX();
                 float nY = event.getY();
 
+
                 if (mPositionX + (nX - refX) <= 0 && mPositionX + (nX - refX) >= (canvasWidth * -1))
                     mPositionX += nX - refX;
 
                 if (mPositionY + (nY - refY) <= 0 && mPositionY + (nY - refY) >= (canvasHeight * -1))
                     mPositionY += nY - refY;
+
+
+
+                //mPositionX += nX - refX;
+                //mPositionY += nY - refY;
+
 
                 refX = nX;
                 refY = nY;
@@ -107,6 +120,29 @@ public class Map extends View {
         }
         return true;
     }
+    public void changeFloor(int floorNumber){
+         //String name = "R.drawable." + imageName[floorNumber];
+         // bitmap = BitmapFactory.decodeResource(getResources(), name);
+         switch (floorNumber){
+             case 1 :
+                 bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.image1);
+                 break;
+             case 2 :
+                 bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.image2);
+                 break;
+             case 3 :
+                 bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.image3);
+                 break;
+             case 4 :
+                 bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.image4);
+                 break;
+             case 5 :
+                 bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.image5);
+                 break;
+             default:
+         }
+        invalidate();
+     }
 
 //    @Override
 //    protected void onSizeChanged(int w, int h, int oldw, int oldh){
