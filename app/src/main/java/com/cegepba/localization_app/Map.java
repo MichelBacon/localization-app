@@ -56,10 +56,10 @@ public class Map extends View {
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener{
         @Override
         public boolean onScale(ScaleGestureDetector detector){
-//            mScaleFactor *= detector.getScaleFactor();
-//            mScaleFactor = Math.max(mMinZoom, Math.min(mScaleFactor, mMaxZoom));
+            //mScaleFactor *= detector.getScaleFactor();
+            //mScaleFactor = Math.max(mMinZoom, Math.min(mScaleFactor, mMaxZoom));
             final float scale = detector.getScaleFactor();
-            mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor * scale, 5.0f));
+            mScaleFactor = Math.max(mMinZoom, Math.min(mScaleFactor * scale, mMaxZoom));
 
             if (mScaleFactor < 5f) {
                 // 1 Grabbing
@@ -69,12 +69,14 @@ public class Map extends View {
                 float diffX = centerX - mPositionX;
                 float diffY = centerY - mPositionY;
                 // 3 Scaling difference
-                if(mPositionX < 3050)
+                // if(mPositionX < 3050)
                 diffX = diffX * scale - diffX;
-                if(mPositionY < 3050)
+                // if(mPositionY < 3050)
                 diffY = diffY * scale - diffY;
                 // 4 Updating image origin
+                if(mPositionX < canvasWidth && mScaleFactor < mMaxZoom && mScaleFactor > mMinZoom)
                 mPositionX -= diffX;
+                if(mPositionY < canvasHeight && mScaleFactor < mMaxZoom && mScaleFactor > mMinZoom)
                 mPositionY -= diffY;
             }
 
@@ -116,10 +118,10 @@ public class Map extends View {
 
     public void drawUserPositionBitmap(Canvas canvas) {
         canvas.save();
-        canvas.translate(mPositionX,mPositionY);
+        canvas.translate(mPositionX, mPositionY);
         canvas.scale(mScaleFactor/3, mScaleFactor/3);
         //TODO position bitmap = position user
-        canvas.drawBitmap(bitmapUserPosition, 4000, 4000, null);
+        canvas.drawBitmap(bitmapUserPosition, 3200, 6900, null);
         canvas.restore();
     }
 
@@ -162,6 +164,16 @@ public class Map extends View {
         }
         return position;
     }
+//    private float scale(float position, float delta, float canvas){
+//        if (position + delta >= 0 && delta > 0){
+//            position = 0;
+//        }else if (position + delta < -canvas){
+//            position = -canvas;
+//        }else{
+//            position += delta;
+//        }
+//        return position;
+//    }
     public void changeFloor(int floorNumber){
          //String name = "R.drawable." + imageName[floorNumber];
          // bitmap = BitmapFactory.decodeResource(getResources(), name);
