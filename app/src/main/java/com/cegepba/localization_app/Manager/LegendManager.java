@@ -2,22 +2,34 @@ package com.cegepba.localization_app.Manager;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cegepba.localization_app.Model.Legends;
 import com.cegepba.localization_app.R;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firestore.v1.Target;
+
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 //TODO draw text with color (textcolor = color)
@@ -25,8 +37,8 @@ import java.util.ArrayList;
 public class LegendManager extends AppCompatActivity {
 
     private FirebaseFirestore firebaseFirestore;
-    private TextView textViewName;
-    private ArrayList<Legends> legends;
+    private RecyclerView firestoreList;
+    private FirestoreRecyclerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +47,9 @@ public class LegendManager extends AppCompatActivity {
             setContentView(R.layout.activity_legend);
 
             firebaseFirestore = FirebaseFirestore.getInstance();
-            textViewName = findViewById(R.id.textView_name);
+            firestoreList = findViewById(R.id.recyclerView);
 
-            setTextView();
+            setRecyclerView();
 
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -46,30 +58,52 @@ public class LegendManager extends AppCompatActivity {
         }
     }
 
-    private void setTextView() {
-        firebaseFirestore.collection("Legends")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                DocumentReference docRef = firebaseFirestore.collection("Legends").document(document.getId());
-                                docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        Legends legend = documentSnapshot.toObject(Legends.class);
+    private void setRecyclerView() {
+        Query query = firebaseFirestore.collection("Legends");
 
-                                        if(legend != null)
-                                        {
-                                            textViewName.setTextColor(Color.parseColor(legend.getColor()));
-                                            textViewName.setText(legend.getName());
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                    }
-                });
+        FirestoreRecyclerOptions<Legends> options = new FirestoreRecyclerOptions.Builder<Legends>()
+                .setQuery(query, Legends.class)
+                .build();
+
+        adapter = new FirestoreRecyclerAdapter<Legends, LegendsViewHolder>(options) {
+            @NonNull
+            @Override
+            public LegendsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_simple_legend,parent,false);
+                return new LegendsViewHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull LegendsViewHolder holder, int position, @NonNull Legends model) {
+                holder.textView_name.setTextColor(Color.parseColor(model.getColor()));
+                holder.textView_name.setText(model.getName());
+            }
+        };
+        firestoreList.setHasFixedSize(true);
+        firestoreList.setLayoutManager(new LinearLayoutManager(this));
+        firestoreList.setAdapter(adapter);
+    }
+
+    private class LegendsViewHolder extends RecyclerView.ViewHolder{
+
+        private TextView textView_name;
+
+        public LegendsViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            textView_name = itemView.findViewById(R.id.name_text);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.stopListening();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        adapter.startListening();
     }
 }
