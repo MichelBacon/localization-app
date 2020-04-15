@@ -2,6 +2,8 @@ package com.cegepba.localization_app.Manager;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,7 +25,6 @@ import java.util.ArrayList;
 public class LegendManager extends AppCompatActivity {
 
     private FirebaseFirestore firebaseFirestore;
-    private TextView textViewColor;
     private TextView textViewName;
     private ArrayList<Legends> legends;
 
@@ -34,7 +35,6 @@ public class LegendManager extends AppCompatActivity {
             setContentView(R.layout.activity_legend);
 
             firebaseFirestore = FirebaseFirestore.getInstance();
-            textViewColor = findViewById(R.id.textView_color);
             textViewName = findViewById(R.id.textView_name);
 
             setTextView();
@@ -62,10 +62,8 @@ public class LegendManager extends AppCompatActivity {
 
                                         if(legend != null)
                                         {
-                                            legends = new ArrayList<>();
-                                            legends.add(legend);
-                                            textViewColor.setText(legends.get(0).getColor());
-                                            textViewName.setText(legends.get(0).getName());
+                                            textViewName.setTextColor(Color.parseColor(legend.getColor()));
+                                            textViewName.setText(legend.getName());
                                         }
                                     }
                                 });
