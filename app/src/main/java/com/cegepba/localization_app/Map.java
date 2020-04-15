@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -30,6 +31,7 @@ public class Map extends View {
     private final static float mMaxZoom = 1.5f;
     private float canvasWidth;
     private float canvasHeight;
+    private String floorLevel;
     private int brightness(int pixel) { return (pixel >> 16)& 0xff; }
 
     //private static String[] imageName = {"image1","image2","image3","image4","image5"};
@@ -43,8 +45,9 @@ public class Map extends View {
     }
     public Map(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        floorLevel = getResources().getString(R.string.Floor1st);
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
-        bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.image1);
+        bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.floors1);
         bitmapUserPosition = BitmapFactory.decodeResource(getResources(), R.drawable.location);
     }
 
@@ -70,8 +73,8 @@ public class Map extends View {
         drawUserPositionBitmap(canvas);
         drawText(canvas);
 
-        canvasWidth = 2606 * mScaleFactor;
-        canvasHeight = 1967 * mScaleFactor;
+        canvasWidth = 3050 * mScaleFactor;
+        canvasHeight = 3050 * mScaleFactor;
     }
 
     public void drawBitmap(Canvas canvas) {
@@ -84,10 +87,12 @@ public class Map extends View {
 
     public void drawText(Canvas canvas) {
         Paint paint = new Paint();
+        paint.setColor(Color.GRAY);
         paint.setTextSize(100);
-        canvas.drawText(Float.toString(mPositionX), 100,100, paint);
-        canvas.drawText(Float.toString(mPositionY), 100,200, paint);
-        canvas.drawText(Float.toString(mScaleFactor), 100,300, paint);
+        canvas.drawText(floorLevel, 100,100, paint);
+        canvas.drawText(Float.toString(mPositionX), 100,200, paint);
+        canvas.drawText(Float.toString(mPositionY), 100,300, paint);
+        canvas.drawText(Float.toString(mScaleFactor), 100,400, paint);
     }
 
     public void drawUserPositionBitmap(Canvas canvas) {
@@ -134,19 +139,24 @@ public class Map extends View {
          // bitmap = BitmapFactory.decodeResource(getResources(), name);
          switch (floorNumber){
              case 1 :
-                 bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.image1);
+                 floorLevel = getResources().getString(R.string.Floor1st);
+                 bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.floors1);
                  break;
              case 2 :
-                 bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.image2);
+                 floorLevel = getResources().getString(R.string.Floor2nd);
+                 bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.floors2);
                  break;
              case 3 :
-                 bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.image3);
+                 floorLevel = getResources().getString(R.string.Floor3rd);
+                 bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.floors3);
                  break;
              case 4 :
-                 bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.image4);
+                 floorLevel = getResources().getString(R.string.Floor4th);
+                 bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.floors4);
                  break;
              case 5 :
-                 bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.image5);
+                 floorLevel = getResources().getString(R.string.Floor5th);
+                 bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.floors5);
                  break;
              default:
          }
