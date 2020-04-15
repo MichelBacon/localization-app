@@ -56,11 +56,30 @@ public class Map extends View {
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener{
         @Override
         public boolean onScale(ScaleGestureDetector detector){
+//            mScaleFactor *= detector.getScaleFactor();
+//            mScaleFactor = Math.max(mMinZoom, Math.min(mScaleFactor, mMaxZoom));
+            final float scale = detector.getScaleFactor();
+            mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor * scale, 5.0f));
 
-            mScaleFactor *= detector.getScaleFactor();
-            mScaleFactor = Math.max(mMinZoom, Math.min(mScaleFactor, mMaxZoom));
+            if (mScaleFactor < 5f) {
+                // 1 Grabbing
+                final float centerX = detector.getFocusX();
+                final float centerY = detector.getFocusY();
+                // 2 Calculating difference
+                float diffX = centerX - mPositionX;
+                float diffY = centerY - mPositionY;
+                // 3 Scaling difference
+                if(mPositionX < 3050)
+                diffX = diffX * scale - diffX;
+                if(mPositionY < 3050)
+                diffY = diffY * scale - diffY;
+                // 4 Updating image origin
+                mPositionX -= diffX;
+                mPositionY -= diffY;
+            }
+
+
             invalidate();
-
             return true;
         }
     }
@@ -119,11 +138,11 @@ public class Map extends View {
                 float nX = event.getX();
                 float nY = event.getY();
 
-                if (mPositionX + (nX - refX) <= 0 && mPositionX + (nX - refX) >= (canvasWidth * -1))
-                    mPositionX += nX - refX;
+                float deltaX = nX - refX;
+                float deltaY = nY - refY;
 
-                if (mPositionY + (nY - refY) <= 0 && mPositionY + (nY - refY) >= (canvasHeight * -1))
-                    mPositionY += nY - refY;
+                mPositionX = movement(mPositionX, deltaX, canvasWidth);
+                mPositionY = movement(mPositionY, deltaY, canvasHeight);
 
                 refX = nX;
                 refY = nY;
@@ -133,7 +152,16 @@ public class Map extends View {
         }
         return true;
     }
-
+    private float movement(float position, float delta, float canvas){
+        if (position + delta >= 0 && delta > 0){
+            position = 0;
+        }else if (position + delta < -canvas){
+            position = -canvas;
+        }else{
+            position += delta;
+        }
+        return position;
+    }
     public void changeFloor(int floorNumber){
          //String name = "R.drawable." + imageName[floorNumber];
          // bitmap = BitmapFactory.decodeResource(getResources(), name);
