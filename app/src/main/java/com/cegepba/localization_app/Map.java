@@ -1,18 +1,29 @@
 package com.cegepba.localization_app;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
+import com.cegepba.localization_app.Manager.InfoManager;
+import com.cegepba.localization_app.Manager.PopManager;
+import com.cegepba.localization_app.Manager.RoomsManager;
+import com.cegepba.localization_app.Model.Rooms;
 import com.cegepba.localization_app.R;
+
+import java.util.ArrayList;
 
 //import com.hazem.coloringforkids.commom.Common;
 //import com.hazem.coloringforkids.utils.FloodFill;
@@ -32,6 +43,10 @@ public class Map extends View {
     private float canvasWidth;
     private float canvasHeight;
     private String floorLevel;
+    private RoomsManager roomsManager;
+    private ArrayList<Rooms> rooms;
+    private float clickPositionX;
+    private float clickPositionY;
     private int brightness(int pixel) { return (pixel >> 16)& 0xff; }
 
     //private static String[] imageName = {"image1","image2","image3","image4","image5"};
@@ -49,6 +64,8 @@ public class Map extends View {
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.floors1);
         bitmapUserPosition = BitmapFactory.decodeResource(getResources(), R.drawable.location);
+        roomsManager = new RoomsManager();
+        rooms = roomsManager.GetRooms();
     }
 
     //endregion
@@ -106,13 +123,29 @@ public class Map extends View {
 
     //endregion
 
+    final GestureDetector gestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
+        public void onLongPress(MotionEvent e) {
+            for (Rooms room : rooms) {
+                if(clickPositionIsInAClass(clickPositionX, clickPositionY, room)) {
+                    Intent myIntent = new Intent(getContext(), PopManager.class);
+                    getContext().startActivity(myIntent);
+                }
+            }
+        }
+    });
+
     @Override
     public boolean onTouchEvent(MotionEvent event){
+        gestureDetector.onTouchEvent(event);
         mScaleDetector.onTouchEvent(event);
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
                 refX = event.getX();
                 refY = event.getY();
+
+                clickPositionX = mPositionX - refX;
+                clickPositionY = mPositionY - refY;
+
                 //paint((int)((refX - mPositionX)/mScaleFactor),(int)((refY - mPositionY/mScaleFactor));
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -132,6 +165,18 @@ public class Map extends View {
                 break;
         }
         return true;
+    }
+
+    private boolean clickPositionIsInAClass(float clickPositionX, float clickPositionY, Rooms room) {
+        return clickPositionXIsBetweenFirebasePosition(clickPositionX, room) && clickPositionYIsBetweenFirebasePosition(clickPositionY, room);
+    }
+
+    private boolean clickPositionXIsBetweenFirebasePosition(float clickPositionX, Rooms room) {
+        return (clickPositionX <= room.getPositionYTLeft()) && (clickPositionX >= room.getPositionXTRight());
+    }
+
+    private boolean clickPositionYIsBetweenFirebasePosition(float clickPositionY, Rooms room) {
+        return (clickPositionY <= room.getPositionYTLeft()) && (clickPositionY >= room.getPositionYBLeft());
     }
 
     public void changeFloor(int floorNumber){

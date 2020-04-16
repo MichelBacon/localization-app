@@ -4,10 +4,35 @@ import com.google.firebase.firestore.DocumentReference;
 
 public class Rooms {
     private String name;
-    private DocumentReference legendId;
     //private Floors floor;
     private String description;
     private String beaconId;
+    private float positionXBLeft;
+    private float positionXBRight;
+    private float positionXTLeft;
+    private float positionXTRight;
+    private float positionYTLeft;
+    private float positionYTRight;
+    private float positionYBLeft;
+    private float positionYBRight;
+
+    public Rooms(){}
+
+    public Rooms(String name, String description, String beaconId, float positionXBLeft,
+                 float positionXBRight, float positionXTLeft, float positionXTRight, float positionYTLeft,
+                 float positionYTRight, float positionYBLeft, float positionYBRight) {
+        this.name = name;
+        this.description = description;
+        this.beaconId = beaconId;
+        this.positionXBLeft = positionXBLeft;
+        this.positionXBRight = positionXBRight;
+        this.positionXTLeft = positionXTLeft;
+        this.positionXTRight = positionXTRight;
+        this.positionYTLeft = positionYTLeft;
+        this.positionYTRight = positionYTRight;
+        this.positionYBLeft = positionYBLeft;
+        this.positionYBRight = positionYBRight;
+    }
 
     public String getName() {
         return name;
@@ -15,14 +40,6 @@ public class Rooms {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public DocumentReference getLegendId() {
-        return legendId;
-    }
-
-    public void setLegendId(DocumentReference legendId) {
-        this.legendId = legendId;
     }
 
     /*public Floors getFloor() {
@@ -48,13 +65,67 @@ public class Rooms {
         this.beaconId = beaconId;
     }
 
-    public Rooms(){}
+    public float getPositionXBLeft() {
+        return positionXBLeft;
+    }
 
-    public Rooms(String name, DocumentReference legendId, /*Floors floor,*/ String description, String beaconId) {
-        this.name = name;
-        this.legendId = legendId;
-        //this.floor = floor;
-        this.description = description;
-        this.beaconId = beaconId;
+    public void setPositionXBLeft(float positionXBLeft) {
+        this.positionXBLeft = positionXBLeft;
+    }
+
+    public float getPositionXBRight() {
+        return positionXBRight;
+    }
+
+    public void setPositionXBRight(float positionXBRight) {
+        this.positionXBRight = positionXBRight;
+    }
+
+    public float getPositionXTLeft() {
+        return positionXTLeft;
+    }
+
+    public void setPositionXTLeft(float positionXTLeft) {
+        this.positionXTLeft = positionXTLeft;
+    }
+
+    public float getPositionXTRight() {
+        return positionXTRight;
+    }
+
+    public void setPositionXTRight(float positionXTRight) {
+        this.positionXTRight = positionXTRight;
+    }
+
+    public float getPositionYTLeft() {
+        return positionYTLeft;
+    }
+
+    public void setPositionYTLeft(float positionYTLeft) {
+        this.positionYTLeft = positionYTLeft;
+    }
+
+    public float getPositionYTRight() {
+        return positionYTRight;
+    }
+
+    public void setPositionYTRight(float positionYTRight) {
+        this.positionYTRight = positionYTRight;
+    }
+
+    public float getPositionYBLeft() {
+        return positionYBLeft;
+    }
+
+    public void setPositionYBLeft(float positionYBLeft) {
+        this.positionYBLeft = positionYBLeft;
+    }
+
+    public float getPositionYBRight() {
+        return positionYBRight;
+    }
+
+    public void setPositionYBRight(float positionYBRight) {
+        this.positionYBRight = positionYBRight;
     }
 }

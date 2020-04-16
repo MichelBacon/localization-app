@@ -25,6 +25,9 @@ public class PopManager extends Activity {
     private TextView roomName;
     private TextView descriptionText;
     private ImageView closeButton;
+    private Rooms room;
+
+    public PopManager() {}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +76,7 @@ public class PopManager extends Activity {
                                 docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        Rooms room = documentSnapshot.toObject(Rooms.class);
+                                        room = documentSnapshot.toObject(Rooms.class);
 
                                         roomName.setText(room.getName());
                                         descriptionText.setText(room.getDescription());
