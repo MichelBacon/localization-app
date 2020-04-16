@@ -140,8 +140,11 @@ public class Map extends View {
                 refX = event.getX();
                 refY = event.getY();
 
-                clickPositionX = mPositionX - refX;
-                clickPositionY = mPositionY - refY;
+                float tempX = mPositionX / mScaleFactor;
+                float tempY = mPositionY / mScaleFactor;
+
+                clickPositionX = tempX - refX;
+                clickPositionY = tempY - refY;
 
                 //paint((int)((refX - mPositionX)/mScaleFactor),(int)((refY - mPositionY/mScaleFactor));
                 break;
