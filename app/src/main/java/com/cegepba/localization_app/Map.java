@@ -1,6 +1,5 @@
 package com.cegepba.localization_app;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,19 +8,15 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
-import com.cegepba.localization_app.Manager.InfoManager;
 import com.cegepba.localization_app.Manager.PopManager;
 import com.cegepba.localization_app.Manager.RoomsManager;
 import com.cegepba.localization_app.Model.Rooms;
-import com.cegepba.localization_app.R;
 
 import java.util.ArrayList;
 
@@ -65,7 +60,8 @@ public class Map extends View {
         bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.floors1);
         bitmapUserPosition = BitmapFactory.decodeResource(getResources(), R.drawable.location);
         roomsManager = new RoomsManager();
-        rooms = roomsManager.GetRooms();
+        roomsManager.setRoomsArray();
+        rooms = roomsManager.getRooms();
     }
 
     //endregion

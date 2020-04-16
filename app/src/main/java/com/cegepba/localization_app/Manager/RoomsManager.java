@@ -22,7 +22,7 @@ public class RoomsManager {
         firebaseFirestore = FirebaseFirestore.getInstance();
     }
 
-    public ArrayList<Rooms> GetRooms() {
+    public void setRoomsArray() {
         rooms = new ArrayList<>();
 
         firebaseFirestore.collection("Rooms")
@@ -43,7 +43,9 @@ public class RoomsManager {
                         }
                     }
                 });
+    }
 
+    public ArrayList<Rooms> getRooms() {
         return rooms;
     }
 }
