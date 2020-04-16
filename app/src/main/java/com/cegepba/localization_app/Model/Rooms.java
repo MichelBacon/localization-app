@@ -61,71 +61,36 @@ public class Rooms {
         return beaconId;
     }
 
-    public void setBeaconId(String beaconId) {
-        this.beaconId = beaconId;
-    }
-
     public float getPositionXBLeft() {
         return positionXBLeft;
-    }
-
-    public void setPositionXBLeft(float positionXBLeft) {
-        this.positionXBLeft = positionXBLeft;
     }
 
     public float getPositionXBRight() {
         return positionXBRight;
     }
 
-    public void setPositionXBRight(float positionXBRight) {
-        this.positionXBRight = positionXBRight;
-    }
-
     public float getPositionXTLeft() {
         return positionXTLeft;
-    }
-
-    public void setPositionXTLeft(float positionXTLeft) {
-        this.positionXTLeft = positionXTLeft;
     }
 
     public float getPositionXTRight() {
         return positionXTRight;
     }
 
-    public void setPositionXTRight(float positionXTRight) {
-        this.positionXTRight = positionXTRight;
-    }
 
     public float getPositionYTLeft() {
         return positionYTLeft;
-    }
-
-    public void setPositionYTLeft(float positionYTLeft) {
-        this.positionYTLeft = positionYTLeft;
     }
 
     public float getPositionYTRight() {
         return positionYTRight;
     }
 
-    public void setPositionYTRight(float positionYTRight) {
-        this.positionYTRight = positionYTRight;
-    }
-
     public float getPositionYBLeft() {
         return positionYBLeft;
     }
 
-    public void setPositionYBLeft(float positionYBLeft) {
-        this.positionYBLeft = positionYBLeft;
-    }
-
     public float getPositionYBRight() {
         return positionYBRight;
-    }
-
-    public void setPositionYBRight(float positionYBRight) {
-        this.positionYBRight = positionYBRight;
     }
 }

@@ -12,6 +12,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class RoomsManager {
 
@@ -22,6 +23,8 @@ public class RoomsManager {
         firebaseFirestore = FirebaseFirestore.getInstance();
     }
 
+    //TODO know how to structure better the code with firebase
+
     public void setRoomsArray() {
         rooms = new ArrayList<>();
 
@@ -31,7 +34,7 @@ public class RoomsManager {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 DocumentReference docRef = firebaseFirestore.collection("Rooms").document(document.getId());
                                 docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override

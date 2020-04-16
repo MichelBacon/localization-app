@@ -22,7 +22,6 @@ public class InfoManager extends AppCompatActivity implements View.OnClickListen
         btnAdmin.setOnClickListener(InfoManager.this);
     }
 
-
     @Override
     public void onClick(View v) {
     }

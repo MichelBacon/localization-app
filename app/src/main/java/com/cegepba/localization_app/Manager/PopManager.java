@@ -64,6 +64,7 @@ public class PopManager extends Activity {
 
     private void setTextView() {
         //TODO add loading bar (spinner)
+        //TODO Replace this code with an higher class code
 
         firebaseFirestore.collection("Rooms")
                 .get()
