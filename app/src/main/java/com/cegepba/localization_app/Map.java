@@ -70,10 +70,28 @@ public class Map extends View {
         @Override
         public boolean onScale(ScaleGestureDetector detector){
 
-            mScaleFactor *= detector.getScaleFactor();
-            mScaleFactor = Math.max(mMinZoom, Math.min(mScaleFactor, mMaxZoom));
-            invalidate();
+            final float scale = detector.getScaleFactor();
+            mScaleFactor = Math.max(mMinZoom, Math.min(mScaleFactor * scale, mMaxZoom));
 
+                // 1 Grabbing
+                final float centerX = detector.getFocusX();
+                final float centerY = detector.getFocusY();
+                // 2 Calculating difference
+                float diffX = centerX - mPositionX;
+                float diffY = centerY - mPositionY;
+                // 3 Scaling difference
+                diffX = diffX * scale - diffX;
+                diffY = diffY * scale - diffY;
+                // 4 Updating image origin
+                if (mScaleFactor < mMaxZoom && mScaleFactor > mMinZoom) {
+                    if (mPositionX > -canvasWidth && mPositionX < 0) {
+                        mPositionX -= diffX;
+                    }
+                    if (mPositionY > -canvasHeight && mPositionY < 0) {
+                        mPositionY -= diffY;
+                    }
+                }
+                invalidate();
             return true;
         }
     }
@@ -82,12 +100,11 @@ public class Map extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        canvasWidth = 3050 * mScaleFactor;
+        canvasHeight = 2700 * mScaleFactor;
         drawBitmap(canvas);
         drawUserPositionBitmap(canvas);
         drawText(canvas);
-
-        canvasWidth = 3050 * mScaleFactor;
-        canvasHeight = 3050 * mScaleFactor;
     }
 
     public void drawBitmap(Canvas canvas) {
@@ -110,10 +127,10 @@ public class Map extends View {
 
     public void drawUserPositionBitmap(Canvas canvas) {
         canvas.save();
-        canvas.translate(mPositionX,mPositionY);
+        canvas.translate(mPositionX, mPositionY);
         canvas.scale(mScaleFactor/3, mScaleFactor/3);
         //TODO position bitmap = position user
-        canvas.drawBitmap(bitmapUserPosition, 4000, 4000, null);
+        canvas.drawBitmap(bitmapUserPosition, 3200, 6900, null);
         canvas.restore();
     }
 
@@ -149,22 +166,34 @@ public class Map extends View {
                 //paint((int)((refX - mPositionX)/mScaleFactor),(int)((refY - mPositionY/mScaleFactor));
                 break;
             case MotionEvent.ACTION_MOVE:
-                float nX = event.getX();
-                float nY = event.getY();
+                if (!mScaleDetector.isInProgress()){
+                    float nX = event.getX();
+                    float nY = event.getY();
 
-                if (mPositionX + (nX - refX) <= 0 && mPositionX + (nX - refX) >= (canvasWidth * -1))
-                    mPositionX += nX - refX;
+                    float deltaX = nX - refX;
+                    float deltaY = nY - refY;
 
-                if (mPositionY + (nY - refY) <= 0 && mPositionY + (nY - refY) >= (canvasHeight * -1))
-                    mPositionY += nY - refY;
+                    mPositionX = movement(mPositionX, deltaX, canvasWidth);
+                    mPositionY = movement(mPositionY, deltaY, canvasHeight);
 
-                refX = nX;
-                refY = nY;
+                    refX = nX;
+                    refY = nY;
 
-                invalidate();
+                    invalidate();
+                }
                 break;
         }
         return true;
+    }
+    private float movement(float position, float delta, float canvas){
+        if (position + delta >= 0 && delta > 0){
+            position = 0;
+        }else if (position + delta < -canvas){
+            position = -canvas;
+        }else{
+            position += delta;
+        }
+        return position;
     }
 
     private boolean clickPositionIsInAClass(float clickPositionX, float clickPositionY, Rooms room) {
