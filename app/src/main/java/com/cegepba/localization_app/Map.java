@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 
 import com.cegepba.localization_app.Manager.PopManager;
 import com.cegepba.localization_app.Manager.RoomsManager;
+import com.cegepba.localization_app.Model.Floors;
 import com.cegepba.localization_app.Model.Rooms;
 
 import java.util.ArrayList;
@@ -38,7 +39,9 @@ public class Map extends View {
     private float canvasWidth;
     private float canvasHeight;
     private String floorLevel;
-    private RoomsManager roomsManager;
+    //TODO change init currentFloor with the current user floor
+    private int currentFloor = 1;
+    private ArrayList<Floors> listFloors;
     private ArrayList<Rooms> rooms;
     private float clickPositionX;
     private float clickPositionY;
@@ -55,13 +58,16 @@ public class Map extends View {
     }
     public Map(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        floorLevel = getResources().getString(R.string.Floor1st);
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.floors1);
         bitmapUserPosition = BitmapFactory.decodeResource(getResources(), R.drawable.location);
-        roomsManager = new RoomsManager();
+        RoomsManager roomsManager = new RoomsManager();
         roomsManager.setRoomsArray();
         rooms = roomsManager.getRooms();
+        listFloors = new ArrayList<>();
+
+        initFloorList();
+        floorLevel = "Étage : " + listFloors.get(0).getFloorNum();
     }
 
     //endregion
@@ -107,7 +113,7 @@ public class Map extends View {
         drawText(canvas);
     }
 
-    public void drawBitmap(Canvas canvas) {
+    private void drawBitmap(Canvas canvas) {
         canvas.save();
         canvas.translate(mPositionX,mPositionY);
         canvas.scale(mScaleFactor, mScaleFactor);
@@ -115,7 +121,7 @@ public class Map extends View {
         canvas.restore();
     }
 
-    public void drawText(Canvas canvas) {
+    private void drawText(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(Color.GRAY);
         paint.setTextSize(100);
@@ -125,7 +131,7 @@ public class Map extends View {
         canvas.drawText(Float.toString(mScaleFactor), 100,400, paint);
     }
 
-    public void drawUserPositionBitmap(Canvas canvas) {
+    private void drawUserPositionBitmap(Canvas canvas) {
         canvas.save();
         canvas.translate(mPositionX, mPositionY);
         canvas.scale(mScaleFactor/3, mScaleFactor/3);
@@ -139,7 +145,7 @@ public class Map extends View {
     final GestureDetector gestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
         public void onLongPress(MotionEvent e) {
             for (Rooms room : rooms) {
-                if(clickPositionIsInAClass(clickPositionX, clickPositionY, room)) {
+                if(clickPositionIsInAClass(clickPositionX, clickPositionY, room) && room.getFloor() == currentFloor) {
                     Intent myIntent = new Intent(getContext(), PopManager.class);
                     myIntent.putExtra("room", room);
                     getContext().startActivity(myIntent);
@@ -208,34 +214,26 @@ public class Map extends View {
         return (clickPositionY <= room.getPositionYTLeft()) && (clickPositionY >= room.getPositionYBLeft());
     }
 
+    private void initFloorList() {
+        for (int i=0; i<5; i++){
+            int j = i + 1;
+            Floors floors = new Floors();
+            floors.setDrawable(getResources().getIdentifier("floors"+j,"drawable", getContext().getPackageName()));
+            floors.setFloorNum(j);
+            listFloors.add(floors);
+        }
+    }
+
     public void changeFloor(int floorNumber){
-         //String name = "R.drawable." + imageName[floorNumber];
-         // bitmap = BitmapFactory.decodeResource(getResources(), name);
-         switch (floorNumber){
-             case 1 :
-                 floorLevel = getResources().getString(R.string.Floor1st);
-                 bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.floors1);
-                 break;
-             case 2 :
-                 floorLevel = getResources().getString(R.string.Floor2nd);
-                 bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.floors2);
-                 break;
-             case 3 :
-                 floorLevel = getResources().getString(R.string.Floor3rd);
-                 bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.floors3);
-                 break;
-             case 4 :
-                 floorLevel = getResources().getString(R.string.Floor4th);
-                 bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.floors4);
-                 break;
-             case 5 :
-                 floorLevel = getResources().getString(R.string.Floor5th);
-                 bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.floors5);
-                 break;
-             default:
-         }
+        addElementFromFloor(floorNumber-1);
         invalidate();
-     }
+    }
+
+    private void addElementFromFloor(int floorNumber) {
+        floorLevel = "Étage : " + listFloors.get(floorNumber).getFloorNum();
+        currentFloor = listFloors.get(floorNumber).getFloorNum();
+        bitmapMap = BitmapFactory.decodeResource(getResources(), listFloors.get(floorNumber).getDrawable());
+    }
 
 //    @Override
 //    protected void onSizeChanged(int w, int h, int oldw, int oldh){
@@ -260,7 +258,5 @@ public class Map extends View {
 //            }
 //        }
 //    }
-
-
 
 }

@@ -1,12 +1,10 @@
 package com.cegepba.localization_app.Model;
 
-import com.google.firebase.firestore.DocumentReference;
-
 import java.io.Serializable;
 
 public class Rooms implements Serializable {
     private String name;
-    //private Floors floor;
+    private int floor;
     private String description;
     private String beaconId;
     private float positionXBLeft;
@@ -20,7 +18,7 @@ public class Rooms implements Serializable {
 
     public Rooms(){}
 
-    public Rooms(String name, String description, String beaconId, float positionXBLeft,
+    public Rooms(String name, int floor,String description, String beaconId, float positionXBLeft,
                  float positionXBRight, float positionXTLeft, float positionXTRight, float positionYTLeft,
                  float positionYTRight, float positionYBLeft, float positionYBRight) {
         this.name = name;
@@ -34,6 +32,7 @@ public class Rooms implements Serializable {
         this.positionYTRight = positionYTRight;
         this.positionYBLeft = positionYBLeft;
         this.positionYBRight = positionYBRight;
+        this.floor = floor;
     }
 
     public String getName() {
@@ -44,12 +43,9 @@ public class Rooms implements Serializable {
         this.name = name;
     }
 
-    /*public Floors getFloor() {
+    public int getFloor() {
         return floor;
     }
-    public void setFloor(Floors floor) {
-        this.floor = floor;
-    }*/
 
     public String getDescription() {
         return description;

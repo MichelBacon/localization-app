@@ -12,11 +12,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class PopManager extends Activity {
 
-    private FirebaseFirestore firebaseFirestore;
-
     private TextView roomName;
     private TextView descriptionText;
-    private ImageView closeButton;
     private Rooms room;
 
     public PopManager() {}
@@ -26,11 +23,9 @@ public class PopManager extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pop);
 
-        firebaseFirestore = FirebaseFirestore.getInstance();
-
         roomName = findViewById(R.id.roomId);
         descriptionText = findViewById(R.id.descriptionText);
-        closeButton = findViewById(R.id.x_button);
+        ImageView closeButton = findViewById(R.id.x_button);
 
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override

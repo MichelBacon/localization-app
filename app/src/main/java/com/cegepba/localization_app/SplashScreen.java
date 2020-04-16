@@ -7,7 +7,7 @@ import android.os.Bundle;
 
 public class SplashScreen extends Activity implements Runnable {
 
-    Thread mThread;
+    private Thread mThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
