@@ -2,7 +2,9 @@ package com.cegepba.localization_app.Model;
 
 import com.google.firebase.firestore.DocumentReference;
 
-public class Rooms {
+import java.io.Serializable;
+
+public class Rooms implements Serializable {
     private String name;
     //private Floors floor;
     private String description;

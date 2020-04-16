@@ -124,6 +124,7 @@ public class Map extends View {
             for (Rooms room : rooms) {
                 if(clickPositionIsInAClass(clickPositionX, clickPositionY, room)) {
                     Intent myIntent = new Intent(getContext(), PopManager.class);
+                    myIntent.putExtra("room", room);
                     getContext().startActivity(myIntent);
                 }
             }
