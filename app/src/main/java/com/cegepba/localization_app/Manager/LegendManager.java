@@ -18,6 +18,8 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import java.util.Objects;
+
 public class LegendManager extends AppCompatActivity {
 
     private FirebaseFirestore firebaseFirestore;
@@ -35,7 +37,7 @@ public class LegendManager extends AppCompatActivity {
 
             setRecyclerView();
 
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         }
         catch (Exception ex) {
             Toast.makeText(this, ex.getMessage(),Toast.LENGTH_LONG).show();
@@ -69,11 +71,11 @@ public class LegendManager extends AppCompatActivity {
         firestoreList.setAdapter(adapter);
     }
 
-    private class LegendsViewHolder extends RecyclerView.ViewHolder{
+    private static class LegendsViewHolder extends RecyclerView.ViewHolder{
 
         private TextView textView_name;
 
-        public LegendsViewHolder(@NonNull View itemView) {
+        LegendsViewHolder(@NonNull View itemView) {
             super(itemView);
 
             textView_name = itemView.findViewById(R.id.name_text);

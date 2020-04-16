@@ -1,7 +1,5 @@
 package com.cegepba.localization_app.Model;
 
-import android.graphics.drawable.Drawable;
-
 public class Floors {
 
     private int floorNum;

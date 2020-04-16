@@ -58,7 +58,6 @@ public class Map extends View {
     }
     public Map(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        floorLevel = getResources().getString(R.string.Floor1st);
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.floors1);
         bitmapUserPosition = BitmapFactory.decodeResource(getResources(), R.drawable.location);
@@ -68,6 +67,7 @@ public class Map extends View {
         listFloors = new ArrayList<>();
 
         initFloorList();
+        floorLevel = "Étage : " + listFloors.get(0).getFloorNum();
     }
 
     //endregion
@@ -113,7 +113,7 @@ public class Map extends View {
         drawText(canvas);
     }
 
-    public void drawBitmap(Canvas canvas) {
+    private void drawBitmap(Canvas canvas) {
         canvas.save();
         canvas.translate(mPositionX,mPositionY);
         canvas.scale(mScaleFactor, mScaleFactor);
@@ -121,7 +121,7 @@ public class Map extends View {
         canvas.restore();
     }
 
-    public void drawText(Canvas canvas) {
+    private void drawText(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(Color.GRAY);
         paint.setTextSize(100);
@@ -131,7 +131,7 @@ public class Map extends View {
         canvas.drawText(Float.toString(mScaleFactor), 100,400, paint);
     }
 
-    public void drawUserPositionBitmap(Canvas canvas) {
+    private void drawUserPositionBitmap(Canvas canvas) {
         canvas.save();
         canvas.translate(mPositionX, mPositionY);
         canvas.scale(mScaleFactor/3, mScaleFactor/3);
@@ -230,7 +230,7 @@ public class Map extends View {
     }
 
     private void addElementFromFloor(int floorNumber) {
-        floorLevel = listFloors.get(floorNumber).getFloorNum() + " étages";
+        floorLevel = "Étage : " + listFloors.get(floorNumber).getFloorNum();
         currentFloor = listFloors.get(floorNumber).getFloorNum();
         bitmapMap = BitmapFactory.decodeResource(getResources(), listFloors.get(floorNumber).getDrawable());
     }
