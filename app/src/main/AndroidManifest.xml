@@ -9,13 +9,41 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".SplashScreen"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Manager.PopManager"
+            android:theme="@style/AppTheme.CustomTheme" />
+        <activity
+            android:name=".ui.login.AdminLogin"
+            android:label="@string/title_activity_admin_login"
+            android:parentActivityName=".Manager.InfoManager">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cegepba.localization_app.Manager.InfoManager" />
+        </activity>
+        <activity
+            android:name=".Manager.LegendManager"
+            android:label="@string/legend"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".Manager.InfoManager"
+            android:label="@string/info"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".Map" />
     </application>
 
 </manifest>
