@@ -6,17 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".Manager.InfoManager">
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="13dp"
-        android:layout_marginTop="17dp"
-        android:layout_marginEnd="310dp"
-        android:layout_marginBottom="538dp"
-        android:text="Button"
+    <TextView
+        android:id="@+id/textView_descriptionInfo"
+        android:layout_width="336dp"
+        android:layout_height="59dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:text="Cette application a été conçu pour faciliter le déplacement dans le Cégep Beauce-Appalaches. "
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.005" />
 </androidx.constraintlayout.widget.ConstraintLayout>

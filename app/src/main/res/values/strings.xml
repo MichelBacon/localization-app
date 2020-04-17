@@ -23,4 +23,12 @@
     <string name="Floor3rd">3ième étage</string>
     <string name="Floor4th">4ième étage</string>
     <string name="Floor5th">5ième étage</string>
+    <string name="connexion">Connexion</string>
+    <string name="mot_de_passe">Mot de passe</string>
+    <string name="adresse_courriel">Adresse courriel</string>
+    <string name="nom">Nom</string>
+    <string name="description">Description</string>
+    <string name="couleur_html">Couleur HTML</string>
+    <string name="ajout_de_locaux">Ajout de locaux</string>
+    <string name="tage">Étage</string>
 </resources>
