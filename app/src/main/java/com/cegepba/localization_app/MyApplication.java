@@ -58,15 +58,17 @@ public class MyApplication extends Application {
             }
         });
 
-        beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
+        //TODO get UUID from beacon (call Alex and admin)
+
+        /*beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
             @Override
             public void onServiceReady() {
                 beaconManager.startMonitoring(new BeaconRegion(
                         "monitored region",
-                        UUID.fromString("211d09865dba48d11d037c9611d2329"),
+                        UUID.fromString(""),
                         null, null));
             }
-        });
+        });*/
     }
 
     public void showNotification(String title, String message) {
