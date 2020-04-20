@@ -7,20 +7,20 @@ public class Rooms implements Serializable {
     private int floor;
     private String description;
     private String beaconId;
-    private float positionXBLeft;
-    private float positionXBRight;
-    private float positionXTLeft;
-    private float positionXTRight;
-    private float positionYTLeft;
-    private float positionYTRight;
-    private float positionYBLeft;
-    private float positionYBRight;
+    private int positionXBLeft;
+    private int positionXBRight;
+    private int positionXTLeft;
+    private int positionXTRight;
+    private int positionYTLeft;
+    private int positionYTRight;
+    private int positionYBLeft;
+    private int positionYBRight;
 
     public Rooms(){}
 
-    public Rooms(String name, int floor,String description, String beaconId, float positionXBLeft,
-                 float positionXBRight, float positionXTLeft, float positionXTRight, float positionYTLeft,
-                 float positionYTRight, float positionYBLeft, float positionYBRight) {
+    public Rooms(String name, int floor,String description, String beaconId, int positionXBLeft,
+                 int positionXBRight, int positionXTLeft, int positionXTRight, int positionYTLeft,
+                 int positionYTRight, int positionYBLeft, int positionYBRight) {
         this.name = name;
         this.description = description;
         this.beaconId = beaconId;
