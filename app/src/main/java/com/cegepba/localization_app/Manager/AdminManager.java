@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.cegepba.localization_app.Model.Legends;
 import com.cegepba.localization_app.Model.Rooms;
@@ -76,5 +77,7 @@ public class AdminManager extends AppCompatActivity {
 
         Rooms room = new Rooms(name, floor, description,beaconId,xBL,xBR,xTL,xTR,yTL,yTR,yBL,yBR);
         db.collection("Rooms").add(room);
+
+        Toast.makeText(this, "Ajout de local fait", Toast.LENGTH_SHORT).show();
     }
 }
