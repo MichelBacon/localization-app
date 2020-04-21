@@ -2,6 +2,7 @@ package com.cegepba.localization_app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,8 +17,16 @@ import androidx.core.view.MenuItemCompat;
 
 import com.cegepba.localization_app.Manager.InfoManager;
 import com.cegepba.localization_app.Manager.LegendManager;
+import com.cegepba.localization_app.Model.Rooms;
 import com.estimote.coresdk.common.requirements.SystemRequirementsChecker;
 import com.estimote.coresdk.service.BeaconManager;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import org.w3c.dom.Document;
 
 public class MainActivity extends AppCompatActivity {
     //region private variable
@@ -27,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonFloors4;
     private Button buttonFloors5;
     private BeaconManager beaconManager;
+    private FirebaseFirestore db;
     Map map;
     //endregion
 
@@ -36,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         map = findViewById(R.id.map);
         beaconManager = new BeaconManager(getApplicationContext());
+        db = FirebaseFirestore.getInstance();
 
         buttonFloors1 = findViewById(R.id.btnFloor1);
         buttonFloors2 = findViewById(R.id.btnFloor2);
@@ -92,7 +103,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void searchData(String query) {
-
+        db.collection("Rooms").whereEqualTo("name", query).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for(DocumentSnapshot doc : task.getResult()) {
+                    Rooms room = doc.toObject(Rooms.class);
+                    String desc = room.getDescription();
+                    Log.e("Test", "test : " + desc);
+                }
+            }
+        });
     }
 
     private void showActivity(Class className) {
