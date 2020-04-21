@@ -1,4 +1,4 @@
-package com.cegepba.localization_app;
+package com.cegepba.localization_app.Manager;
 
 import android.app.Application;
 import android.app.Notification;
@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.cegepba.localization_app.MainActivity;
 import com.estimote.coresdk.observation.region.beacon.BeaconRegion;
 import com.estimote.coresdk.recognition.packets.Beacon;
 import com.estimote.coresdk.service.BeaconManager;
@@ -18,7 +19,7 @@ import java.util.UUID;
 
 //TODO https://developer.estimote.com/android/tutorial/part-2-background-monitoring/
 
-public class MyApplication extends Application {
+public class BeaconMonitoring extends Application {
 
     private BeaconManager beaconManager;
 

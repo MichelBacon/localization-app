@@ -46,6 +46,7 @@ public class Map extends View {
     private float clickPositionX;
     private float clickPositionY;
     private int brightness(int pixel) { return (pixel >> 16)& 0xff; }
+    Paint paint = new Paint();
 
     //private static String[] imageName = {"image1","image2","image3","image4","image5"};
 
@@ -118,6 +119,7 @@ public class Map extends View {
         canvas.translate(mPositionX,mPositionY);
         canvas.scale(mScaleFactor, mScaleFactor);
         canvas.drawBitmap(bitmapMap, 0, 0, null);
+        drawLine(canvas);
         canvas.restore();
     }
 
@@ -138,6 +140,21 @@ public class Map extends View {
         //TODO position bitmap = position user
         canvas.drawBitmap(bitmapUserPosition, 3200, 6900, null);
         canvas.restore();
+    }
+
+    private void drawLine(Canvas canvas) {
+        paint.setColor(Color.BLUE);
+        paint.setStrokeWidth(35);
+        //first startX and startY = userPosition
+        //second and beyond startX and startY = last stopX and stopY
+        //startY and stop Y = last - 18 (to fit well)
+        canvas.drawLine(1280,2472,1280,3200,paint);
+        canvas.drawLine(1280,3182,2300,3182,paint);
+
+        //Erase a line ?
+        //paint.setColor(Color.WHITE);
+        //paint.setStrokeWidth(35);
+        //canvas.drawLine(1280,2472,1280,3200,paint);
     }
 
     //endregion
@@ -234,29 +251,4 @@ public class Map extends View {
         currentFloor = listFloors.get(floorNumber).getFloorNum();
         bitmapMap = BitmapFactory.decodeResource(getResources(), listFloors.get(floorNumber).getDrawable());
     }
-
-//    @Override
-//    protected void onSizeChanged(int w, int h, int oldw, int oldh){
-//        super.onSizeChanged(w,h,oldw,oldh);
-//
-//        if(bitmap == null){
-//
-//            Bitmap srcBitmap = BitmapFactory.decodeResource(getResources(), Common.PICTURE_SELECTED);
-//            bitmap = Bitmap.createScaledBitmap(srcBitmap, w, h, false);
-//
-//            for(int i=0;i<bitmap.getWidth();i++){
-//                for(int j=0;j<bitmap.getHeight();j++){
-//
-//                    int alpha = 255 - brightness(bitmap.getPixel(i,j));
-//
-//                    if(alpha<200){
-//                        bitmap.setPixel(i,j, Color.WHITE);
-//                    }else{
-//                        bitmap.setPixel(i,j,Color.BLACK);
-//                    }
-//                }
-//            }
-//        }
-//    }
-
 }
