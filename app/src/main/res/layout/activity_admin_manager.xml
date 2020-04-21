@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Manager.AdminManager">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/class_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/ajout_de_locaux"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textSize="32sp"/>
+
+        <EditText
+            android:id="@+id/editText_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:hint="@string/nom"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toEndOf="@+id/class_add"
+            app:layout_constraintStart_toStartOf="@+id/class_add"
+            app:layout_constraintTop_toBottomOf="@+id/class_add" />
+
+        <EditText
+            android:id="@+id/editText_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:hint="@string/description"
+            android:inputType="textPersonName"
+            app:layout_constraintStart_toStartOf="@+id/editText_name"
+            app:layout_constraintTop_toBottomOf="@+id/editText_name" />
+
+        <EditText
+            android:id="@+id/editText_floor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:hint="@string/tage"
+            android:inputType="textPersonName"
+            app:layout_constraintStart_toStartOf="@+id/editText14"
+            app:layout_constraintTop_toBottomOf="@+id/editText14" />
+
+        <EditText
+            android:id="@+id/xtopLeft"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="12dp"
+            android:ems="10"
+            android:hint="X"
+            android:inputType="textPersonName"
+            app:layout_constraintStart_toStartOf="@+id/editText_floor"
+            app:layout_constraintTop_toBottomOf="@+id/editText_floor" />
+
+        <EditText
+            android:id="@+id/xbotRight"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:ems="10"
+            android:hint="X"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toStartOf="@+id/ybotRight"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/xtopRight"
+            app:layout_constraintTop_toBottomOf="@+id/xtopRight" />
+
+        <EditText
+            android:id="@+id/xtopRight"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="8dp"
+            android:ems="10"
+            android:hint="X"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toStartOf="@+id/ytopRight"
+            app:layout_constraintTop_toBottomOf="@+id/editText_floor" />
+
+        <EditText
+            android:id="@+id/xbotLeft"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:ems="10"
+            android:hint="X"
+            android:inputType="textPersonName"
+            app:layout_constraintStart_toStartOf="@+id/xtopLeft"
+            app:layout_constraintTop_toBottomOf="@+id/xtopLeft" />
+
+        <EditText
+            android:id="@+id/ybotLeft"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:ems="10"
+            android:hint="Y"
+            android:inputType="textPersonName"
+            app:layout_constraintStart_toEndOf="@+id/xbotLeft"
+            app:layout_constraintTop_toBottomOf="@+id/ytopLeft" />
+
+        <EditText
+            android:id="@+id/ybotRight"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:ems="10"
+            android:hint="Y"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toEndOf="@+id/ytopRight"
+            app:layout_constraintTop_toBottomOf="@+id/ytopRight" />
+
+        <EditText
+            android:id="@+id/ytopRight"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="12dp"
+            android:ems="10"
+            android:hint="Y"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toEndOf="@+id/editText_floor"
+            app:layout_constraintTop_toBottomOf="@+id/editText_floor" />
+
+        <EditText
+            android:id="@+id/ytopLeft"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="12dp"
+            android:ems="10"
+            android:hint="Y"
+            android:inputType="textPersonName"
+            app:layout_constraintStart_toEndOf="@+id/xtopLeft"
+            app:layout_constraintTop_toBottomOf="@+id/editText_floor" />
+
+        <EditText
+            android:id="@+id/editText14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:ems="10"
+            android:hint="Balise ID"
+            android:inputType="textPersonName"
+            app:layout_constraintStart_toStartOf="@+id/editText_description"
+            app:layout_constraintTop_toBottomOf="@+id/editText_description" />
+
+        <Button
+            android:id="@+id/btn_add_class"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:text="Ajouter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/ybotRight"
+            app:layout_constraintStart_toStartOf="@+id/xbotLeft" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
