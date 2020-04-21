@@ -8,11 +8,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import com.cegepba.localization_app.MainActivity;
+import com.cegepba.localization_app.Model.Rooms;
+import com.cegepba.localization_app.R;
 import com.estimote.coresdk.observation.region.beacon.BeaconRegion;
 import com.estimote.coresdk.recognition.packets.Beacon;
 import com.estimote.coresdk.service.BeaconManager;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,12 +33,14 @@ import java.util.UUID;
 public class BeaconMonitoring extends Application {
 
     private BeaconManager beaconManager;
+    private FirebaseFirestore db;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
         beaconManager = new BeaconManager(getApplicationContext());
+        db = FirebaseFirestore.getInstance();
 
         //TODO change scanperiod for the battery draining
         beaconManager.setBackgroundScanPeriod(1000, 0);
@@ -36,7 +48,17 @@ public class BeaconMonitoring extends Application {
         beaconManager.setMonitoringListener(new BeaconManager.BeaconMonitoringListener() {
             @Override
             public void onEnteredRegion(BeaconRegion region, List<Beacon> beacons) {
-                Log.e("ENTER", "ENERTETRERERERERERE");
+                db.collection("Rooms").whereEqualTo("beaconId", beacons.get(0).getProximityUUID().toString().toUpperCase()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.getResult() != null){
+                            for(DocumentSnapshot doc : task.getResult()) {
+                                Rooms room = doc.toObject(Rooms.class);
+                                Toast.makeText(getApplicationContext(),room.getDescription(),Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }
+                });
             }
             @Override
             public void onExitedRegion(BeaconRegion region) {
@@ -49,7 +71,7 @@ public class BeaconMonitoring extends Application {
             public void onServiceReady() {
                 beaconManager.startMonitoring(new BeaconRegion(
                         "monitored region",
-                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
+                        null,
                         null, null));
             }
         });
