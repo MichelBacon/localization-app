@@ -31,4 +31,5 @@
     <string name="couleur_html">Couleur HTML</string>
     <string name="ajout_de_locaux">Ajout de locaux</string>
     <string name="tage">Étage</string>
+    <string name="not_found">Local inexistant</string>
 </resources>

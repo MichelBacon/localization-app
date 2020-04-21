@@ -10,23 +10,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.MenuItemCompat;
-
 import com.cegepba.localization_app.Manager.InfoManager;
 import com.cegepba.localization_app.Manager.LegendManager;
 import com.cegepba.localization_app.Model.Rooms;
 import com.estimote.coresdk.common.requirements.SystemRequirementsChecker;
+import com.estimote.coresdk.observation.region.beacon.BeaconRegion;
 import com.estimote.coresdk.service.BeaconManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import org.w3c.dom.Document;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     //region private variable
@@ -38,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private BeaconManager beaconManager;
     private FirebaseFirestore db;
     Map map;
+    private BeaconRegion region;
     //endregion
 
     @Override
@@ -45,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         map = findViewById(R.id.map);
-        beaconManager = new BeaconManager(getApplicationContext());
         db = FirebaseFirestore.getInstance();
 
         buttonFloors1 = findViewById(R.id.btnFloor1);
@@ -58,6 +56,10 @@ public class MainActivity extends AppCompatActivity {
         setListener3();
         setListener4();
         setListener5();
+
+        beaconManager = new BeaconManager(this);
+        region = new BeaconRegion("ranged region",
+                UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"), null, null);
     }
 
     @Override
@@ -65,6 +67,20 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         SystemRequirementsChecker.checkWithDefaultDialogs(this);
+
+        beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
+            @Override
+            public void onServiceReady() {
+                beaconManager.startRanging(region);
+            }
+        });
+    }
+
+    @Override
+    protected void onPause() {
+        beaconManager.stopRanging(region);
+
+        super.onPause();
     }
 
     @Override
@@ -106,10 +122,16 @@ public class MainActivity extends AppCompatActivity {
         db.collection("Rooms").whereEqualTo("name", query).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                for(DocumentSnapshot doc : task.getResult()) {
-                    Rooms room = doc.toObject(Rooms.class);
-                    String desc = room.getDescription();
-                    Log.e("Test", "test : " + desc);
+                if(task.getResult() != null){
+                    if(task.getResult().isEmpty())
+                    {
+                        createMessage(R.string.not_found);
+                    }
+
+                    for(DocumentSnapshot doc : task.getResult()) {
+                        Rooms room = doc.toObject(Rooms.class);
+                        Toast.makeText(getApplicationContext(),room.getDescription(),Toast.LENGTH_LONG).show();
+                    }
                 }
             }
         });
