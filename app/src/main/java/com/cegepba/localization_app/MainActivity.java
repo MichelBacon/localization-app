@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
                         .withLowLatencyPowerMode()
                         .build();
 
-        final ProximityZone zone = new ProximityZoneBuilder()
+        ProximityZone zone = new ProximityZoneBuilder()
                 .forTag("desks")
                 .inFarRange()
                 .onEnter(new Function1<ProximityZoneContext, Unit>() {
