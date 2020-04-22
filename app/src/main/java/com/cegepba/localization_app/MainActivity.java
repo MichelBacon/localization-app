@@ -16,15 +16,27 @@ import androidx.core.view.MenuItemCompat;
 import com.cegepba.localization_app.Manager.InfoManager;
 import com.cegepba.localization_app.Manager.LegendManager;
 import com.cegepba.localization_app.Model.Rooms;
-import com.estimote.coresdk.common.requirements.SystemRequirementsChecker;
-import com.estimote.coresdk.observation.region.beacon.BeaconRegion;
-import com.estimote.coresdk.service.BeaconManager;
+import com.estimote.mustard.rx_goodness.rx_requirements_wizard.Requirement;
+import com.estimote.mustard.rx_goodness.rx_requirements_wizard.RequirementsWizardFactory;
+import com.estimote.proximity_sdk.api.EstimoteCloudCredentials;
+import com.estimote.proximity_sdk.api.ProximityObserver;
+import com.estimote.proximity_sdk.api.ProximityObserverBuilder;
+import com.estimote.proximity_sdk.api.ProximityZone;
+import com.estimote.proximity_sdk.api.ProximityZoneBuilder;
+import com.estimote.proximity_sdk.api.ProximityZoneContext;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-import java.util.UUID;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 
 public class MainActivity extends AppCompatActivity {
     //region private variable
@@ -33,10 +45,10 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonFloors3;
     private Button buttonFloors4;
     private Button buttonFloors5;
-    private BeaconManager beaconManager;
     private FirebaseFirestore db;
+    private ProximityObserver proximityObserver;
+    ProximityObserver.Handler observationHandler;
     Map map;
-    private BeaconRegion region;
     //endregion
 
     @Override
@@ -57,30 +69,87 @@ public class MainActivity extends AppCompatActivity {
         setListener4();
         setListener5();
 
-        beaconManager = new BeaconManager(this);
-        region = new BeaconRegion("ranged region",
-                UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"), null, null);
+        EstimoteCloudCredentials cloudCredentials =
+                new EstimoteCloudCredentials("localization-app-o5p", "a38e9ecd8297e4ee81e372564fe23434");
+
+        this.proximityObserver =
+                new ProximityObserverBuilder(getApplicationContext(), cloudCredentials)
+                        .onError(new Function1<Throwable, Unit>() {
+                            @Override
+                            public Unit invoke(Throwable throwable) {
+                                Log.e("app", "proximity observer error: " + throwable);
+                                return null;
+                            }
+                        })
+                        .withLowLatencyPowerMode()
+                        .build();
+
+        final ProximityZone zone = new ProximityZoneBuilder()
+                .forTag("desks")
+                .inFarRange()
+                .onEnter(new Function1<ProximityZoneContext, Unit>() {
+                    @Override
+                    public Unit invoke(ProximityZoneContext context) {
+                        String deskOwner = context.getAttachments().get("desk-owner");
+                        Log.d("app", "Welcome to " + deskOwner + "'s desk");
+                        return null;
+                    }
+                })
+                .onExit(new Function1<ProximityZoneContext, Unit>() {
+                    @Override
+                    public Unit invoke(ProximityZoneContext context) {
+                        Log.d("app", "Bye bye, come again!");
+                        return null;
+                    }
+                })
+                .onContextChange(new Function1<Set<? extends ProximityZoneContext>, Unit>() {
+                    @Override
+                    public Unit invoke(Set<? extends ProximityZoneContext> contexts) {
+                        List<String> deskOwners = new ArrayList<>();
+                        for (ProximityZoneContext context : contexts) {
+                            deskOwners.add(context.getAttachments().get("desk-owner"));
+                        }
+                        Log.d("app", "In range of desks: " + deskOwners);
+                        return null;
+                    }
+                })
+                .build();
+
+        /*RequirementsWizardFactory
+                .createEstimoteRequirementsWizard()
+                .fulfillRequirements(this,
+                        // onRequirementsFulfilled
+                        new Function0<Unit>() {
+                            @Override public Unit invoke() {
+                                Log.d("app", "requirements fulfilled");
+                                proximityObserver.startObserving(zone);
+                                return null;
+                            }
+                        },
+                        // onRequirementsMissing
+                        new Function1<List<? extends Requirement>, Unit>() {
+                            @Override public Unit invoke(List<? extends Requirement> requirements) {
+                                Log.e("app", "requirements missing: " + requirements);
+                                return null;
+                            }
+                        },
+                        // onError
+                        new Function1<Throwable, Unit>() {
+                            @Override public Unit invoke(Throwable throwable) {
+                                Log.e("app", "requirements error: " + throwable);
+                                return null;
+                            }
+                        });*/
+
+        observationHandler =
+                proximityObserver
+                        .startObserving(zone);
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        SystemRequirementsChecker.checkWithDefaultDialogs(this);
-
-        beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
-            @Override
-            public void onServiceReady() {
-                beaconManager.startRanging(region);
-            }
-        });
-    }
-
-    @Override
-    protected void onPause() {
-        beaconManager.stopRanging(region);
-
-        super.onPause();
+    protected void onDestroy() {
+        observationHandler.stop();
+        super.onDestroy();
     }
 
     @Override
