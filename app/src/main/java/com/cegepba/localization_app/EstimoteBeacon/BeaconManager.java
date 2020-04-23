@@ -41,7 +41,7 @@ public class BeaconManager {
                 .build();
 
         ProximityZone zone = new ProximityZoneBuilder()
-                .forTag("desks")
+                .forTag("node")
                 .inCustomRange(3.0)
                 .onContextChange(new Function1<Set<? extends ProximityZoneContext>, Unit>() {
                     @Override

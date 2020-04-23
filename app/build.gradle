@@ -35,7 +35,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:21.4.2'
     implementation 'com.google.firebase:firebase-core:17.3.0'
     implementation 'com.firebaseui:firebase-ui-firestore:6.2.0'
-    implementation 'com.estimote:proximity-sdk:1.0.3'
+    implementation 'com.estimote:proximity-sdk:1.0.5'
     implementation 'com.estimote:mustard:0.2.1'
     implementation 'com.estimote:scanning-plugin:0.25.4'
 }
