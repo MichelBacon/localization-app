@@ -119,8 +119,15 @@ public class Map extends View {
         canvas.translate(mPositionX,mPositionY);
         canvas.scale(mScaleFactor, mScaleFactor);
         canvas.drawBitmap(bitmapMap, 0, 0, null);
-        drawLine(canvas);
+        drawTraject(canvas, 1280,2472,1280,3200);
         canvas.restore();
+    }
+    private void drawTraject(Canvas canvas, int Xstart, int Ystart, int Xend, int Yend){
+        Paint paint = new Paint();
+        paint.setColor(Color.BLUE);
+        paint.setStrokeWidth(35);
+        canvas.drawLine(Xstart, Ystart, Xend, Yend, paint);
+        //canvas.drawLine(Xend, 3200, 2800, 3200, paint); // test
     }
 
     private void drawText(Canvas canvas) {
@@ -140,21 +147,6 @@ public class Map extends View {
         //TODO position bitmap = position user
         canvas.drawBitmap(bitmapUserPosition, 3200, 6900, null);
         canvas.restore();
-    }
-
-    private void drawLine(Canvas canvas) {
-        paint.setColor(Color.BLUE);
-        paint.setStrokeWidth(35);
-        //first startX and startY = userPosition
-        //second and beyond startX and startY = last stopX and stopY
-        //startY and stop Y = last - 18 (to fit well)
-        canvas.drawLine(1280,2472,1280,3200,paint);
-        canvas.drawLine(1280,3182,2300,3182,paint);
-
-        //Erase a line ?
-        //paint.setColor(Color.WHITE);
-        //paint.setStrokeWidth(35);
-        //canvas.drawLine(1280,2472,1280,3200,paint);
     }
 
     //endregion
