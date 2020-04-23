@@ -13,27 +13,19 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.MenuItemCompat;
+import com.cegepba.localization_app.EstimoteBeacon.BeaconManager;
+import com.cegepba.localization_app.EstimoteBeacon.EstimoteCredentials;
 import com.cegepba.localization_app.Manager.InfoManager;
 import com.cegepba.localization_app.Manager.LegendManager;
 import com.cegepba.localization_app.Model.Rooms;
 import com.estimote.mustard.rx_goodness.rx_requirements_wizard.Requirement;
 import com.estimote.mustard.rx_goodness.rx_requirements_wizard.RequirementsWizardFactory;
-import com.estimote.proximity_sdk.api.EstimoteCloudCredentials;
-import com.estimote.proximity_sdk.api.ProximityObserver;
-import com.estimote.proximity_sdk.api.ProximityObserverBuilder;
-import com.estimote.proximity_sdk.api.ProximityZone;
-import com.estimote.proximity_sdk.api.ProximityZoneBuilder;
-import com.estimote.proximity_sdk.api.ProximityZoneContext;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
@@ -46,8 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonFloors4;
     private Button buttonFloors5;
     private FirebaseFirestore db;
-    private ProximityObserver proximityObserver;
-    ProximityObserver.Handler observationHandler;
+    private BeaconManager beaconManager;
     Map map;
     //endregion
 
@@ -69,87 +60,43 @@ public class MainActivity extends AppCompatActivity {
         setListener4();
         setListener5();
 
-        EstimoteCloudCredentials cloudCredentials =
-                new EstimoteCloudCredentials("localization-app-o5p", "a38e9ecd8297e4ee81e372564fe23434");
-
-        this.proximityObserver =
-                new ProximityObserverBuilder(getApplicationContext(), cloudCredentials)
-                        .onError(new Function1<Throwable, Unit>() {
-                            @Override
-                            public Unit invoke(Throwable throwable) {
-                                Log.e("app", "proximity observer error: " + throwable);
-                                return null;
-                            }
-                        })
-                        .withLowLatencyPowerMode()
-                        .build();
-
-        ProximityZone zone = new ProximityZoneBuilder()
-                .forTag("desks")
-                .inFarRange()
-                .onEnter(new Function1<ProximityZoneContext, Unit>() {
-                    @Override
-                    public Unit invoke(ProximityZoneContext context) {
-                        String deskOwner = context.getAttachments().get("desk-owner");
-                        Log.d("app", "Welcome to " + deskOwner + "'s desk");
-                        return null;
-                    }
-                })
-                .onExit(new Function1<ProximityZoneContext, Unit>() {
-                    @Override
-                    public Unit invoke(ProximityZoneContext context) {
-                        Log.d("app", "Bye bye, come again!");
-                        return null;
-                    }
-                })
-                .onContextChange(new Function1<Set<? extends ProximityZoneContext>, Unit>() {
-                    @Override
-                    public Unit invoke(Set<? extends ProximityZoneContext> contexts) {
-                        List<String> deskOwners = new ArrayList<>();
-                        for (ProximityZoneContext context : contexts) {
-                            deskOwners.add(context.getAttachments().get("desk-owner"));
-                        }
-                        Log.d("app", "In range of desks: " + deskOwners);
-                        return null;
-                    }
-                })
-                .build();
-
-        /*RequirementsWizardFactory
+        RequirementsWizardFactory
                 .createEstimoteRequirementsWizard()
                 .fulfillRequirements(this,
-                        // onRequirementsFulfilled
                         new Function0<Unit>() {
-                            @Override public Unit invoke() {
+                            @Override
+                            public Unit invoke() {
                                 Log.d("app", "requirements fulfilled");
-                                proximityObserver.startObserving(zone);
+                                startProximityContentManager();
                                 return null;
                             }
                         },
-                        // onRequirementsMissing
                         new Function1<List<? extends Requirement>, Unit>() {
-                            @Override public Unit invoke(List<? extends Requirement> requirements) {
+                            @Override
+                            public Unit invoke(List<? extends Requirement> requirements) {
                                 Log.e("app", "requirements missing: " + requirements);
                                 return null;
                             }
                         },
-                        // onError
                         new Function1<Throwable, Unit>() {
-                            @Override public Unit invoke(Throwable throwable) {
+                            @Override
+                            public Unit invoke(Throwable throwable) {
                                 Log.e("app", "requirements error: " + throwable);
                                 return null;
                             }
-                        });*/
+                        });
+    }
 
-        observationHandler =
-                proximityObserver
-                        .startObserving(zone);
+    private void startProximityContentManager() {
+        beaconManager = new BeaconManager(this, ((EstimoteCredentials) getApplication()).cloudCredentials);
+        beaconManager.start();
     }
 
     @Override
     protected void onDestroy() {
-        observationHandler.stop();
         super.onDestroy();
+        if (beaconManager != null)
+            beaconManager.stop();
     }
 
     @Override
