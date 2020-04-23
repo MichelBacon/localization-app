@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
         setListener3();
         setListener4();
         setListener5();
-
         RequirementsWizardFactory
                 .createEstimoteRequirementsWizard()
                 .fulfillRequirements(this,
