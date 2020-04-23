@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonFloors4;
     private Button buttonFloors5;
     private BeaconManager beaconManager;
+    private Node[] nodeList;
     Map map;
     //endregion
 
@@ -43,6 +44,18 @@ public class MainActivity extends AppCompatActivity {
         setListener3();
         setListener4();
         setListener5();
+        nodeList = new Node[4];
+        RouteFinder rf = new RouteFinder(new RouteFinder.onMessageListener() {
+            @Override
+            public void onMessage(String msg) {
+                createMessage(msg);
+            }
+
+            @Override
+            public void setNodeList(Node node, int nodePosition) {
+                nodeList[nodePosition] = node;
+            }
+        });
     }
 
     @Override
@@ -130,6 +143,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void createMessage(int msg){
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+    private void createMessage(String msg){
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
     //endregion chan chan
 }

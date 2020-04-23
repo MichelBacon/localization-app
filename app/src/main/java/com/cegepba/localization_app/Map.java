@@ -118,7 +118,15 @@ public class Map extends View {
         canvas.translate(mPositionX,mPositionY);
         canvas.scale(mScaleFactor, mScaleFactor);
         canvas.drawBitmap(bitmapMap, 0, 0, null);
+        drawTraject(canvas, 1280,2472,1280,3200);
         canvas.restore();
+    }
+    private void drawTraject(Canvas canvas, int Xstart, int Ystart, int Xend, int Yend){
+        Paint paint = new Paint();
+        paint.setColor(Color.BLUE);
+        paint.setStrokeWidth(35);
+        canvas.drawLine(Xstart, Ystart, Xend, Yend, paint);
+        //canvas.drawLine(Xend, 3200, 2800, 3200, paint); // test
     }
 
     private void drawText(Canvas canvas) {
