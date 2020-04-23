@@ -45,7 +45,7 @@ public class LegendManager extends AppCompatActivity {
     }
 
     private void setRecyclerView() {
-        Query query = firebaseFirestore.collection("Legends");
+        Query query = firebaseFirestore.collection("Legends").orderBy("name");
 
         FirestoreRecyclerOptions<Legends> options = new FirestoreRecyclerOptions.Builder<Legends>()
                 .setQuery(query, Legends.class)
