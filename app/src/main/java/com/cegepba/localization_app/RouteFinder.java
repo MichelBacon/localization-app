@@ -5,6 +5,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.cegepba.localization_app.Model.Connections;
+import com.cegepba.localization_app.Model.Nodes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -14,6 +16,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class RouteFinder {
@@ -23,53 +27,83 @@ public class RouteFinder {
     int map[][];
     int count = 0 ;
     onMessageListener onMessageListener;
+    HashMap<String, Nodes> nodes;
 
     public RouteFinder() {
 
     }
 
     public RouteFinder(final RouteFinder.onMessageListener onMessageListener) {
-        map = new int[4][4];
+        map = new int[maxBeacon][maxBeacon];
         this.onMessageListener = onMessageListener;
+        nodes = new HashMap<>();
         db = FirebaseFirestore.getInstance();
-        db.collection("Floors")
+
+        db.collection("nodes")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot documentFloor : Objects.requireNonNull(task.getResult())) {
-                                DocumentReference docRefFloor = documentFloor.getReference();
-                                docRefFloor.collection("Node").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        if(task.isSuccessful()) {
+                            for (QueryDocumentSnapshot documentNode : Objects.requireNonNull(task.getResult())) {
+                                Nodes node = documentNode.toObject(Nodes.class);
+                                nodes.put(documentNode.getId(), node);
+                                DocumentReference docRefNode = documentNode.getReference();
+                                docRefNode.collection("connections").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                     @Override
-                                    public void onSuccess(QuerySnapshot documentSnapshot) {
-                                        for (QueryDocumentSnapshot documentNode : Objects.requireNonNull(documentSnapshot)) {
-                                            Node node = new Node();
-                                            node = documentNode.toObject(Node.class);
-                                                try {
-                                                    onMessageListener.setNodeList(node, count);
-                                                    Log.d("TOAST", documentNode.getId());
-                                                    map[count][0] = node.getDistanceToA();
-                                                    map[count][1] = node.getDistanceToB();
-                                                    map[count][2] = node.getDistanceToC();
-                                                    map[count][3] = node.getDistanceToD();
-                                                }catch (Exception e) {
-                                                    Log.d("TOAST missing data ",String.valueOf(count) + " node found");
-                                                    Log.d("TOAST missing data ",e.toString());
-
-                                                }
-                                            count++;
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if(task.isSuccessful()) {
+                                            for (QueryDocumentSnapshot documentConnections : Objects.requireNonNull(task.getResult())) {
+                                                Connections connection = documentConnections.toObject(Connections.class);
+                                                DocumentReference docRefConnection = connection.getConnectionRef();
+                                                nodes.get(docRefConnection.getId());
+                                            }
                                         }
                                     }
                                 });
                             }
-                        }else{
-                            String msg = task.getException().toString();
-                            onMessageListener.onMessage(msg);
                         }
-                        count = 0;
                     }
                 });
+
+//        db.collection("Floors")
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if (task.isSuccessful()) {
+//                            for (QueryDocumentSnapshot documentFloor : Objects.requireNonNull(task.getResult())) {
+//                                DocumentReference docRefFloor = documentFloor.getReference();
+//                                docRefFloor.collection("Node").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//                                    @Override
+//                                    public void onSuccess(QuerySnapshot documentSnapshot) {
+//                                        for (QueryDocumentSnapshot documentNode : Objects.requireNonNull(documentSnapshot)) {
+//                                            Node node = new Node();
+//                                            node = documentNode.toObject(Node.class);
+//                                                try {
+//                                                    onMessageListener.setNodeList(node, count);
+//                                                    Log.d("TOAST", documentNode.getId());
+//                                                    map[count][0] = node.getDistanceToA();
+//                                                    map[count][1] = node.getDistanceToB();
+//                                                    map[count][2] = node.getDistanceToC();
+//                                                    map[count][3] = node.getDistanceToD();
+//                                                }catch (Exception e) {
+//                                                    Log.d("TOAST missing data ",String.valueOf(count) + " node found");
+//                                                    Log.d("TOAST missing data ",e.toString());
+//
+//                                                }
+//                                            count++;
+//                                        }
+//                                    }
+//                                });
+//                            }
+//                        }else{
+//                            String msg = task.getException().toString();
+//                            onMessageListener.onMessage(msg);
+//                        }
+//                        count = 0;
+//                    }
+//                });
         dijkstra(map, 0);
     }
 

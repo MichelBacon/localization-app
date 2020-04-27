@@ -110,7 +110,9 @@ public class Map extends View {
         canvasWidth = 3050 * mScaleFactor;
         canvasHeight = 2700 * mScaleFactor;
         drawBitmap(canvas);
-        drawUserPositionBitmap(canvas);
+        if(currentFloor == 5) {
+            drawUserPositionBitmap(canvas);
+        }
         drawText(canvas);
     }
 
@@ -124,7 +126,13 @@ public class Map extends View {
     }
     private void drawTraject(Canvas canvas, int Xstart, int Ystart, int Xend, int Yend){
         Paint paint = new Paint();
-        paint.setColor(Color.BLUE);
+
+        if(currentFloor == 5) {
+            paint.setColor(Color.BLUE);
+        } else {
+            paint.setColor(Color.GRAY);
+        }
+
         paint.setStrokeWidth(35);
         canvas.drawLine(Xstart, Ystart, Xend, Yend, paint);
         //canvas.drawLine(Xend, 3200, 2800, 3200, paint); // test
