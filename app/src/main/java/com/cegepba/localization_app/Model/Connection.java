@@ -2,13 +2,13 @@ package com.cegepba.localization_app.Model;
 
 import com.google.firebase.firestore.DocumentReference;
 
-public class Connections {
+public class Connection {
     private DocumentReference connectionRef;
     private int distance;
 
-    public Connections() {}
+    public Connection() {}
 
-    public Connections(DocumentReference connectionRef, int distance) {
+    public Connection(DocumentReference connectionRef, int distance) {
         this.connectionRef = connectionRef;
         this.distance = distance;
     }

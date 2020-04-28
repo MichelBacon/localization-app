@@ -16,8 +16,8 @@ import androidx.annotation.Nullable;
 
 import com.cegepba.localization_app.Manager.PopManager;
 import com.cegepba.localization_app.Manager.RoomsManager;
-import com.cegepba.localization_app.Model.Floors;
-import com.cegepba.localization_app.Model.Rooms;
+import com.cegepba.localization_app.Model.Floor;
+import com.cegepba.localization_app.Model.Room;
 
 import java.util.ArrayList;
 
@@ -41,8 +41,8 @@ public class Map extends View {
     private String floorLevel;
     //TODO change init currentFloor with the current user floor
     private int currentFloor = 1;
-    private ArrayList<Floors> listFloors;
-    private ArrayList<Rooms> rooms;
+    private ArrayList<Floor> listFloors;
+    private ArrayList<Room> rooms;
     private float clickPositionX;
     private float clickPositionY;
     private int brightness(int pixel) { return (pixel >> 16)& 0xff; }
@@ -161,7 +161,7 @@ public class Map extends View {
 
     final GestureDetector gestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
         public void onLongPress(MotionEvent e) {
-            for (Rooms room : rooms) {
+            for (Room room : rooms) {
                 if(clickPositionIsInAClass(clickPositionX, clickPositionY, room) && room.getFloor() == currentFloor) {
                     Intent myIntent = new Intent(getContext(), PopManager.class);
                     myIntent.putExtra("room", room);
@@ -219,22 +219,22 @@ public class Map extends View {
         return position;
     }
 
-    private boolean clickPositionIsInAClass(float clickPositionX, float clickPositionY, Rooms room) {
+    private boolean clickPositionIsInAClass(float clickPositionX, float clickPositionY, Room room) {
         return clickPositionXIsBetweenFirebasePosition(clickPositionX, room) && clickPositionYIsBetweenFirebasePosition(clickPositionY, room);
     }
 
-    private boolean clickPositionXIsBetweenFirebasePosition(float clickPositionX, Rooms room) {
+    private boolean clickPositionXIsBetweenFirebasePosition(float clickPositionX, Room room) {
         return (clickPositionX <= room.getPositionYTLeft()) && (clickPositionX >= room.getPositionXTRight());
     }
 
-    private boolean clickPositionYIsBetweenFirebasePosition(float clickPositionY, Rooms room) {
+    private boolean clickPositionYIsBetweenFirebasePosition(float clickPositionY, Room room) {
         return (clickPositionY <= room.getPositionYTLeft()) && (clickPositionY >= room.getPositionYBLeft());
     }
 
     private void initFloorList() {
         for (int i=0; i<5; i++){
             int j = i + 1;
-            Floors floors = new Floors();
+            Floor floors = new Floor();
             floors.setDrawable(getResources().getIdentifier("floors"+j,"drawable", getContext().getPackageName()));
             floors.setFloorNum(j);
             listFloors.add(floors);

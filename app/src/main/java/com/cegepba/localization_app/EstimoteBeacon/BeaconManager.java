@@ -49,9 +49,9 @@ public class BeaconManager {
                         List<String> deskOwners = new ArrayList<>();
                         for (ProximityZoneContext context : contexts) {
                             deskOwners.add(context.getAttachments().get("desk-owner"));
-                            Log.d("MainActivity", "In range of : " + context.getDeviceId());
+                            //Log.d("MainActivity", "In range of : " + context.getDeviceId());
                         }
-                        Log.d("MainActivity", "In range of desks: " + deskOwners);
+                        //Log.d("MainActivity", "In range of desks: " + deskOwners);
                         return null;
                     }
                 })

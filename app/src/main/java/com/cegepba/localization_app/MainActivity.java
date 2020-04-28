@@ -17,7 +17,8 @@ import com.cegepba.localization_app.EstimoteBeacon.BeaconManager;
 import com.cegepba.localization_app.EstimoteBeacon.EstimoteCredentials;
 import com.cegepba.localization_app.Manager.InfoManager;
 import com.cegepba.localization_app.Manager.LegendManager;
-import com.cegepba.localization_app.Model.Rooms;
+import com.cegepba.localization_app.Model.Node;
+import com.cegepba.localization_app.Model.Room;
 import com.estimote.mustard.rx_goodness.rx_requirements_wizard.Requirement;
 import com.estimote.mustard.rx_goodness.rx_requirements_wizard.RequirementsWizardFactory;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -158,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     for(DocumentSnapshot doc : task.getResult()) {
-                        Rooms room = doc.toObject(Rooms.class);
+                        Room room = doc.toObject(Room.class);
                         Toast.makeText(getApplicationContext(),room.getDescription(),Toast.LENGTH_LONG).show();
                     }
                 }

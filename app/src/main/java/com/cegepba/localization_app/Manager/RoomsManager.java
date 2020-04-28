@@ -1,7 +1,7 @@
 package com.cegepba.localization_app.Manager;
 
 import androidx.annotation.NonNull;
-import com.cegepba.localization_app.Model.Rooms;
+import com.cegepba.localization_app.Model.Room;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -17,7 +17,7 @@ import java.util.Objects;
 public class RoomsManager {
 
     private FirebaseFirestore firebaseFirestore;
-    private ArrayList<Rooms> rooms;
+    private ArrayList<Room> rooms;
 
     public RoomsManager() {
         firebaseFirestore = FirebaseFirestore.getInstance();
@@ -39,7 +39,7 @@ public class RoomsManager {
                                 docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        rooms.add(documentSnapshot.toObject(Rooms.class));
+                                        rooms.add(documentSnapshot.toObject(Room.class));
                                     }
                                 });
                             }
@@ -48,7 +48,7 @@ public class RoomsManager {
                 });
     }
 
-    public ArrayList<Rooms> getRooms() {
+    public ArrayList<Room> getRooms() {
         return rooms;
     }
 }

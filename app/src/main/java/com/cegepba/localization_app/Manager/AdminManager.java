@@ -8,13 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.cegepba.localization_app.Model.Legends;
-import com.cegepba.localization_app.Model.Rooms;
+import com.cegepba.localization_app.Model.Room;
 import com.cegepba.localization_app.R;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class AdminManager extends AppCompatActivity {
 
@@ -75,7 +71,7 @@ public class AdminManager extends AppCompatActivity {
         int yBR = Integer.parseInt(edit_yBR.getText().toString());
         int yBL = Integer.parseInt(edit_yBL.getText().toString());
 
-        Rooms room = new Rooms(name, floor, description,beaconId,xBL,xBR,xTL,xTR,yTL,yTR,yBL,yBR);
+        Room room = new Room(name, floor, description,beaconId,xBL,xBR,xTL,xTR,yTL,yTR,yBL,yBR);
         db.collection("Rooms").add(room);
 
         Toast.makeText(this, "Ajout de local fait", Toast.LENGTH_SHORT).show();

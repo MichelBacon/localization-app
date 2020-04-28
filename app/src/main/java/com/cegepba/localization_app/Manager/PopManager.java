@@ -6,15 +6,14 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.cegepba.localization_app.Model.Rooms;
+import com.cegepba.localization_app.Model.Room;
 import com.cegepba.localization_app.R;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class PopManager extends Activity {
 
     private TextView roomName;
     private TextView descriptionText;
-    private Rooms room;
+    private Room room;
 
     public PopManager() {}
 
@@ -34,7 +33,7 @@ public class PopManager extends Activity {
             }
         });
 
-        room = (Rooms)getIntent().getSerializableExtra("room");
+        room = (Room)getIntent().getSerializableExtra("room");
 
         setPopWindowSize();
         setTextView();

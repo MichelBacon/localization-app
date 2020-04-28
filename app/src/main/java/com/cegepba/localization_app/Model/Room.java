@@ -2,7 +2,7 @@ package com.cegepba.localization_app.Model;
 
 import java.io.Serializable;
 
-public class Rooms implements Serializable {
+public class Room implements Serializable {
     private String name;
     private int floor;
     private String description;
@@ -16,11 +16,11 @@ public class Rooms implements Serializable {
     private int positionYBLeft;
     private int positionYBRight;
 
-    public Rooms(){}
+    public Room(){}
 
-    public Rooms(String name, int floor,String description, String beaconId, int positionXBLeft,
-                 int positionXBRight, int positionXTLeft, int positionXTRight, int positionYTLeft,
-                 int positionYTRight, int positionYBLeft, int positionYBRight) {
+    public Room(String name, int floor, String description, String beaconId, int positionXBLeft,
+                int positionXBRight, int positionXTLeft, int positionXTRight, int positionYTLeft,
+                int positionYTRight, int positionYBLeft, int positionYBRight) {
         this.name = name;
         this.description = description;
         this.beaconId = beaconId;
