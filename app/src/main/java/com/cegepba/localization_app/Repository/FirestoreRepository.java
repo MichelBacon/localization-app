@@ -22,6 +22,8 @@ import java.util.Objects;
 
 public class FirestoreRepository {
 
+    //TODO make it works or DELETE
+
 //    private FirebaseFirestore db;
 //
 //    public FirestoreRepository() {

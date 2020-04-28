@@ -24,12 +24,8 @@ public class RouteFinder {
     private onMessageListener onMessageListener;
     HashMap<String, Node> nodes;
 
-    public RouteFinder() {}
-
-    public RouteFinder(final RouteFinder.onMessageListener onMessageListener) {
-        this.onMessageListener = onMessageListener;
+    public RouteFinder() {
         nodes = new HashMap<>();
-
         db = FirebaseFirestore.getInstance();
 
         //FirestoreRepository repo = new FirestoreRepository();
@@ -42,7 +38,10 @@ public class RouteFinder {
                 }
             }
         });*/
+    }
 
+    public List<String> getRoad(final String startNode, final String destinationNode) {
+        final List<String>[] road = new List[]{new ArrayList<>()};
         db.collection("nodes")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -61,14 +60,30 @@ public class RouteFinder {
                             Tasks.whenAllComplete(connectionNodeQueryTasks).addOnCompleteListener(new OnCompleteListener() {
                                 @Override
                                 public void onComplete(@NonNull Task task) {
-                                    List<String> road = dijkstra(nodes, "PearXtI0pW6MyguiMsTT", "4dKlsY0Ftl0M1RG7ODBY");
-                                    Log.d("TEST1234", road.toString());
-                                    //doDijkstraThing();
+                                    //List<String> road = dijkstra(nodes, startNode, destinationNode);
+                                    road[0] = dijkstra(nodes, "PearXtI0pW6MyguiMsTT", "4dKlsY0Ftl0M1RG7ODBY");
+                                    //Log.d("TEST1234", road.toString());
                                 }
                             });
                         }
                     }
                 });
+        return null;
+
+    }
+
+    public int[][] getPositionForRoad(List<String> road) {
+        int[][] position = new int[road.size()][road.size()];
+        int count = 0;
+        for(String node : road) {
+            Node nodeToGetPosition = nodes.get(node);
+
+            position[count][count] = nodeToGetPosition.getXpos();
+            position[count][count+1] = nodeToGetPosition.getYpos();
+            count++;
+        }
+
+        return position;
     }
 
     private Task<QuerySnapshot> getTaskToAddConnectionToNode(DocumentReference docRefNode, final Node node) {
@@ -85,7 +100,6 @@ public class RouteFinder {
             }
         });
     }
-
 
     private List<String> dijkstra(HashMap<String, Node> nodes, String startNode, String destinationNode) {
         //TODO verifier si il n'y a pas de chemin possible

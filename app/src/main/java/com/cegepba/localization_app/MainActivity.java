@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonFloors5;
     private FirebaseFirestore db;
     private BeaconManager beaconManager;
-    private Node[] nodeList;
     Map map;
     //endregion
 
@@ -87,18 +86,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
 
-        nodeList = new Node[4];
-        RouteFinder rf = new RouteFinder(new RouteFinder.onMessageListener() {
-            @Override
-            public void onMessage(String msg) {
-                createMessage(msg);
-            }
-
-            @Override
-            public void setNodeList(Node node, int nodePosition) {
-                nodeList[nodePosition] = node;
-            }
-        });
+        RouteFinder rf = new RouteFinder();
     }
 
     private void startProximityContentManager() {

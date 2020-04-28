@@ -47,6 +47,7 @@ public class Map extends View {
     private float clickPositionY;
     private int brightness(int pixel) { return (pixel >> 16)& 0xff; }
     Paint paint = new Paint();
+    RouteFinder routeFinder = new RouteFinder();
 
     //private static String[] imageName = {"image1","image2","image3","image4","image5"};
 
@@ -132,6 +133,8 @@ public class Map extends View {
         } else {
             paint.setColor(Color.GRAY);
         }
+
+        //routeFinder.getPositionForRoad(routeFinder.getRoad());
 
         paint.setStrokeWidth(35);
         canvas.drawLine(Xstart, Ystart, Xend, Yend, paint);
