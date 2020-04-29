@@ -99,4 +99,8 @@ public class Room implements Serializable {
     public DocumentReference getNodeRef() {
         return nodeRef;
     }
+
+    public void setNodeRef(DocumentReference nodeRef) {
+        this.nodeRef = nodeRef;
+    }
 }

@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.cegepba.localization_app.Model.Room;
 import com.cegepba.localization_app.R;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class PopManager extends Activity {
 
@@ -34,6 +35,7 @@ public class PopManager extends Activity {
         });
 
         room = (Room)getIntent().getSerializableExtra("room");
+        room.setNodeRef(FirebaseFirestore.getInstance().document((String)getIntent().getSerializableExtra("path")));
 
         setPopWindowSize();
         setTextView();

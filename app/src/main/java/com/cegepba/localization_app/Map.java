@@ -128,6 +128,7 @@ public class Map extends View {
         drawTraject(canvas, 1280,2472,1280,3200);
         canvas.restore();
     }
+
     private void drawTraject(Canvas canvas, int Xstart, int Ystart, int Xend, int Yend){
         Paint paint = new Paint();
 
@@ -168,6 +169,9 @@ public class Map extends View {
             for (Room room : rooms) {
                 if(clickPositionIsInAClass(clickPositionX, clickPositionY, room) && room.getFloor() == currentFloor) {
                     Intent myIntent = new Intent(getContext(), PopManager.class);
+                    String docRefNode = room.getNodeRef().getPath();
+                    room.setNodeRef(null);
+                    myIntent.putExtra("path", docRefNode);
                     myIntent.putExtra("room", room);
                     getContext().startActivity(myIntent);
                 }
@@ -228,7 +232,7 @@ public class Map extends View {
     }
 
     private boolean clickPositionXIsBetweenFirebasePosition(float clickPositionX, Room room) {
-        return (clickPositionX <= room.getPositionYTLeft()) && (clickPositionX >= room.getPositionXTRight());
+        return (clickPositionX <= room.getPositionXTLeft()) && (clickPositionX >= room.getPositionXTRight());
     }
 
     private boolean clickPositionYIsBetweenFirebasePosition(float clickPositionY, Room room) {

@@ -28,14 +28,14 @@ public class RoomsManager {
     public void setRoomsArray() {
         rooms = new ArrayList<>();
 
-        firebaseFirestore.collection("Rooms")
+        firebaseFirestore.collection("rooms")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                DocumentReference docRef = firebaseFirestore.collection("Rooms").document(document.getId());
+                                DocumentReference docRef = firebaseFirestore.collection("rooms").document(document.getId());
                                 docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
