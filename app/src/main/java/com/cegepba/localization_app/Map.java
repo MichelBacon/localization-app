@@ -122,6 +122,9 @@ public class Map extends View {
         canvas.translate(mPositionX,mPositionY);
         canvas.scale(mScaleFactor, mScaleFactor);
         canvas.drawBitmap(bitmapMap, 0, 0, null);
+
+        //routeFinder.getPositionForRoad(routeFinder.getRoad());
+
         drawTraject(canvas, 1280,2472,1280,3200);
         canvas.restore();
     }
@@ -133,8 +136,6 @@ public class Map extends View {
         } else {
             paint.setColor(Color.GRAY);
         }
-
-        //routeFinder.getPositionForRoad(routeFinder.getRoad());
 
         paint.setStrokeWidth(35);
         canvas.drawLine(Xstart, Ystart, Xend, Yend, paint);

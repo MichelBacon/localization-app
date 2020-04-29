@@ -1,6 +1,7 @@
 package com.cegepba.localization_app;
 
 import android.content.Intent;
+import android.icu.text.DateFormat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -21,6 +22,7 @@ import com.cegepba.localization_app.Model.Node;
 import com.cegepba.localization_app.Model.Room;
 import com.estimote.mustard.rx_goodness.rx_requirements_wizard.Requirement;
 import com.estimote.mustard.rx_goodness.rx_requirements_wizard.RequirementsWizardFactory;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonFloors5;
     private FirebaseFirestore db;
     private BeaconManager beaconManager;
+    private SearchView searchView;
     Map map;
     //endregion
 
@@ -87,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
                         });
 
         RouteFinder rf = new RouteFinder();
+
+        Toast.makeText(this, "Veuillez entrer votre position", Toast.LENGTH_LONG).show();
     }
 
     private void startProximityContentManager() {
@@ -106,11 +111,20 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.drawer_menu, menu);
         MenuItem item = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+        searchView = (SearchView) MenuItemCompat.getActionView(item);
+        searchView.setQueryHint("Votre Position");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 searchData(query);
+
+                //TODO if not found then dont do the code
+
+                if (searchView.getQueryHint() != "Votre Destination") {
+                    changeSearchBarForDestination();
+                } else {
+                    exitSearchBar();
+                }
                 return false;
             }
 
@@ -120,6 +134,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         return true;
+    }
+
+    private void exitSearchBar() {
+        searchView.clearFocus();
+        searchView.setIconified(true);
+        searchView.onActionViewCollapsed();
+    }
+
+    private void changeSearchBarForDestination() {
+        searchView.setQuery("", false);
+        searchView.setQueryHint("Votre Destination");
+        Toast.makeText(getApplicationContext(), "Veuillez entrer votre destination", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -137,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void searchData(String query) {
+
         db.collection("Rooms").whereEqualTo("name", query).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
