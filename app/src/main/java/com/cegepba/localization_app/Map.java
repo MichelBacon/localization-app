@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import com.cegepba.localization_app.Manager.PopManager;
 import com.cegepba.localization_app.Manager.RoomsManager;
 import com.cegepba.localization_app.Model.Floor;
+import com.cegepba.localization_app.Model.Node;
 import com.cegepba.localization_app.Model.Room;
 
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ public class Map extends View {
     private float clickPositionX;
     private float clickPositionY;
     private int brightness(int pixel) { return (pixel >> 16)& 0xff; }
+    ArrayList<Node> nodesToDraw;
     Paint paint = new Paint();
     RouteFinder routeFinder = new RouteFinder();
 
@@ -67,6 +69,7 @@ public class Map extends View {
         roomsManager.setRoomsArray();
         rooms = roomsManager.getRooms();
         listFloors = new ArrayList<>();
+        nodesToDraw = new ArrayList<>();
 
         initFloorList();
         floorLevel = "Étage : " + listFloors.get(0).getFloorNum();
@@ -108,29 +111,35 @@ public class Map extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        canvas.save();
+        canvas.translate(mPositionX,mPositionY);
+        canvas.scale(mScaleFactor, mScaleFactor);
         canvasWidth = 3050 * mScaleFactor;
         canvasHeight = 2700 * mScaleFactor;
+        drawObject(canvas);
+        canvas.restore();
+        drawText(canvas);
+    }
+
+    private void drawObject(Canvas canvas) {
         drawBitmap(canvas);
         if(currentFloor == 5) {
             drawUserPositionBitmap(canvas);
         }
-        drawText(canvas);
+        drawTraject(canvas);
     }
 
     private void drawBitmap(Canvas canvas) {
-        canvas.save();
-        canvas.translate(mPositionX,mPositionY);
-        canvas.scale(mScaleFactor, mScaleFactor);
         canvas.drawBitmap(bitmapMap, 0, 0, null);
 
         //routeFinder.getPositionForRoad(routeFinder.getRoad());
 
-        //drawTraject(canvas, 1280,2472,1280,3200);
-        canvas.restore();
+        /*if(Xstart != null && Ystart != null && Xend != null && Yend != null) {
+            drawTraject(canvas, Xstart,Ystart,Xend,Yend);
+        }*/
     }
 
-    public void drawTraject(Canvas canvas, int Xstart, int Ystart, int Xend, int Yend){
-        canvas.save();
+    private void drawTraject(Canvas canvas){
         Paint paint = new Paint();
 
         /*if(currentFloor == 5) {
@@ -142,9 +151,18 @@ public class Map extends View {
         paint.setColor(Color.BLUE);
 
         paint.setStrokeWidth(35);
-        canvas.drawLine(Xstart, Ystart, Xend, Yend, paint);
+
+        for(int i = 0; i<nodesToDraw.size(); i++) {
+            if(i+1 != nodesToDraw.size()) {
+                canvas.drawLine(nodesToDraw.get(i).getXpos(), nodesToDraw.get(i).getYpos(), nodesToDraw.get(i+1).getXpos(), nodesToDraw.get(i+1).getYpos(), paint);
+            }
+        }
+
         //canvas.drawLine(Xend, 3200, 2800, 3200, paint); // test
-        canvas.restore();
+    }
+
+    public void setListNode(ArrayList<Node> nodes) {
+        nodesToDraw = nodes;
     }
 
     private void drawText(Canvas canvas) {

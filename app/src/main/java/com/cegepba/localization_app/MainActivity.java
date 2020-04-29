@@ -30,6 +30,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
 import java.util.List;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
@@ -46,8 +48,9 @@ public class MainActivity extends AppCompatActivity {
     private BeaconManager beaconManager;
     private SearchView searchView;
     Map map;
-    private Node startNode;
-    private Node destinationNode;
+    private String startNode;
+    private String destinationNode;
+    private ArrayList<Node> nodesToDraw;
     //endregion
 
     @Override
@@ -188,14 +191,30 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                 DocumentSnapshot doc = task.getResult();
-                                Node node = doc.toObject(Node.class);
 
                                 if(isPosition) {
-                                    startNode = node;
+                                    startNode = doc.getId();
                                 } else {
-                                    destinationNode = node;
-                                    if(startNode != null && destinationNode != null)
-                                        map.drawTraject(new Canvas(), startNode.getXpos(), startNode.getYpos(), destinationNode.getXpos(), destinationNode.getYpos());
+                                    destinationNode = doc.getId();
+                                    if(startNode != null && destinationNode != null){
+                                        RouteFinder rf = new RouteFinder();
+                                        nodesToDraw = new ArrayList<>();
+                                        List<String> road = rf.getRoad(startNode, destinationNode);
+                                        for(String node :road) {
+                                            db.collection("node")
+                                                    .document(node)
+                                                    .get()
+                                                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                    Node nodeToAdd = task.getResult().toObject(Node.class);
+                                                    nodesToDraw.add(nodeToAdd);
+                                                }
+                                            });
+                                        }
+                                        map.setListNode(nodesToDraw);
+                                    }
+                                        //map.drawBitmap(new Canvas(), startNode.getXpos(), startNode.getYpos(), destinationNode.getXpos(), destinationNode.getYpos());
                                 }
                             }
                         });
