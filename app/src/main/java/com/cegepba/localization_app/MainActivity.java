@@ -199,9 +199,13 @@ public class MainActivity extends AppCompatActivity {
                                     if(startNode != null && destinationNode != null){
                                         RouteFinder rf = new RouteFinder();
                                         nodesToDraw = new ArrayList<>();
-                                        List<String> road = rf.getRoad(startNode, destinationNode);
-                                        int[][] positions = rf.getPositionForRoad(road);
-                                        map.setPositionList(positions);
+                                        rf.getRoad(startNode, destinationNode, new RouteFinder.FirebaseCallback() {
+                                            @Override
+                                            public void onCallback(int[][] list) {
+                                                map.setPositionList(list);
+                                            }
+                                        });
+
                                     }
                                         //map.drawBitmap(new Canvas(), startNode.getXpos(), startNode.getYpos(), destinationNode.getXpos(), destinationNode.getYpos());
                                 }

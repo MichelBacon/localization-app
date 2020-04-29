@@ -23,7 +23,6 @@ public class RouteFinder {
     private FirebaseFirestore db;
     private onMessageListener onMessageListener;
     HashMap<String, Node> nodes;
-    List<String> road;
 
     public RouteFinder() {
         nodes = new HashMap<>();
@@ -41,8 +40,8 @@ public class RouteFinder {
         });*/
     }
 
-    public List<String> getRoad(final String startNode, final String destinationNode) {
-        road = new ArrayList<>();
+    public void getRoad(final String startNode, final String destinationNode, final FirebaseCallback firebaseCallback) {
+
         db.collection("nodes")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -61,30 +60,29 @@ public class RouteFinder {
                             Tasks.whenAllComplete(connectionNodeQueryTasks).addOnCompleteListener(new OnCompleteListener() {
                                 @Override
                                 public void onComplete(@NonNull Task task) {
-                                    //List<String> road = dijkstra(nodes, startNode, destinationNode);
-                                    Log.d("TEST1234", "Before");
+                                    List<String> road;
                                     road = dijkstra(nodes, startNode, destinationNode);
                                     Log.d("TEST1234", road.toString());
+
+                                    int[][] position = new int[road.size()][road.size()];
+                                    int count = 0;
+                                    for(String node : road) {
+                                        Node nodeToGetPosition = nodes.get(node);
+                                        Log.d("Count", "" + count);
+                                        Log.d("Size", "" + position.length);
+                                        position[count][count] = nodeToGetPosition.getXpos();
+                                        position[count][count+1] = nodeToGetPosition.getYpos();
+                                        Log.d("TEST12232342", "" + position[count][count+1]);
+                                        count++;
+                                    }
+
+                                    firebaseCallback.onCallback(position);
                                 }
                             });
                         }
                     }
                 });
         //Log.d("ROAD", "test : " + road.toString());
-        return road;
-    }
-
-    public int[][] getPositionForRoad(List<String> road) {
-        int[][] position = new int[road.size()][road.size()];
-        int count = 0;
-        for(String node : road) {
-            Node nodeToGetPosition = nodes.get(node);
-            position[count][count] = nodeToGetPosition.getXpos();
-            position[count][count+1] = nodeToGetPosition.getYpos();
-            count++;
-        }
-
-        return position;
     }
 
     private Task<QuerySnapshot> getTaskToAddConnectionToNode(DocumentReference docRefNode, final Node node) {
@@ -155,6 +153,10 @@ public class RouteFinder {
     interface onMessageListener{
         void onMessage(String msg);
         void setNodeList(Node node, int nodePosition);
+    }
+
+    interface FirebaseCallback{
+        void onCallback(int[][] list);
     }
 
 }
