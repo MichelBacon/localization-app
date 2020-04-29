@@ -1,6 +1,7 @@
 package com.cegepba.localization_app;
 
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.icu.text.DateFormat;
 import android.os.Bundle;
 import android.util.Log;
@@ -45,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     private BeaconManager beaconManager;
     private SearchView searchView;
     Map map;
+    private Node startNode;
+    private Node destinationNode;
     //endregion
 
     @Override
@@ -117,7 +120,11 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                searchData(query);
+                if(searchView.getQueryHint() != "Votre Destination") {
+                    searchData(query, true);
+                } else {
+                    searchData(query, false);
+                }
 
                 //TODO if not found then dont do the code
 
@@ -163,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void searchData(String query) {
+    private void searchData(String query, final Boolean isPosition) {
 
         db.collection("rooms").whereEqualTo("name", query.toLowerCase()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -182,6 +189,14 @@ public class MainActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                 DocumentSnapshot doc = task.getResult();
                                 Node node = doc.toObject(Node.class);
+
+                                if(isPosition) {
+                                    startNode = node;
+                                } else {
+                                    destinationNode = node;
+                                    if(startNode != null && destinationNode != null)
+                                        map.drawTraject(new Canvas(), startNode.getXpos(), startNode.getYpos(), destinationNode.getXpos(), destinationNode.getYpos());
+                                }
                             }
                         });
                         Toast.makeText(getApplicationContext(),room.getDescription(),Toast.LENGTH_LONG).show();

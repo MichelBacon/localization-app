@@ -125,22 +125,26 @@ public class Map extends View {
 
         //routeFinder.getPositionForRoad(routeFinder.getRoad());
 
-        drawTraject(canvas, 1280,2472,1280,3200);
+        //drawTraject(canvas, 1280,2472,1280,3200);
         canvas.restore();
     }
 
-    private void drawTraject(Canvas canvas, int Xstart, int Ystart, int Xend, int Yend){
+    public void drawTraject(Canvas canvas, int Xstart, int Ystart, int Xend, int Yend){
+        canvas.save();
         Paint paint = new Paint();
 
-        if(currentFloor == 5) {
+        /*if(currentFloor == 5) {
             paint.setColor(Color.BLUE);
         } else {
             paint.setColor(Color.GRAY);
-        }
+        }*/
+
+        paint.setColor(Color.BLUE);
 
         paint.setStrokeWidth(35);
         canvas.drawLine(Xstart, Ystart, Xend, Yend, paint);
         //canvas.drawLine(Xend, 3200, 2800, 3200, paint); // test
+        canvas.restore();
     }
 
     private void drawText(Canvas canvas) {
