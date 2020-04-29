@@ -200,19 +200,8 @@ public class MainActivity extends AppCompatActivity {
                                         RouteFinder rf = new RouteFinder();
                                         nodesToDraw = new ArrayList<>();
                                         List<String> road = rf.getRoad(startNode, destinationNode);
-                                        for(String node :road) {
-                                            db.collection("node")
-                                                    .document(node)
-                                                    .get()
-                                                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                    Node nodeToAdd = task.getResult().toObject(Node.class);
-                                                    nodesToDraw.add(nodeToAdd);
-                                                }
-                                            });
-                                        }
-                                        map.setListNode(nodesToDraw);
+                                        int[][] positions = rf.getPositionForRoad(road);
+                                        map.setPositionList(positions);
                                     }
                                         //map.drawBitmap(new Canvas(), startNode.getXpos(), startNode.getYpos(), destinationNode.getXpos(), destinationNode.getYpos());
                                 }

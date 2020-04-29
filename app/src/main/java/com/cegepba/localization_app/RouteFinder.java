@@ -23,6 +23,7 @@ public class RouteFinder {
     private FirebaseFirestore db;
     private onMessageListener onMessageListener;
     HashMap<String, Node> nodes;
+    List<String> road;
 
     public RouteFinder() {
         nodes = new HashMap<>();
@@ -41,7 +42,7 @@ public class RouteFinder {
     }
 
     public List<String> getRoad(final String startNode, final String destinationNode) {
-        final List<String>[] road = new List[]{new ArrayList<>()};
+        road = new ArrayList<>();
         db.collection("nodes")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -61,15 +62,16 @@ public class RouteFinder {
                                 @Override
                                 public void onComplete(@NonNull Task task) {
                                     //List<String> road = dijkstra(nodes, startNode, destinationNode);
-                                    road[0] = dijkstra(nodes, "PearXtI0pW6MyguiMsTT", "4dKlsY0Ftl0M1RG7ODBY");
-                                    //Log.d("TEST1234", road.toString());
+                                    Log.d("TEST1234", "Before");
+                                    road = dijkstra(nodes, startNode, destinationNode);
+                                    Log.d("TEST1234", road.toString());
                                 }
                             });
                         }
                     }
                 });
-        return null;
-
+        //Log.d("ROAD", "test : " + road.toString());
+        return road;
     }
 
     public int[][] getPositionForRoad(List<String> road) {
@@ -77,7 +79,6 @@ public class RouteFinder {
         int count = 0;
         for(String node : road) {
             Node nodeToGetPosition = nodes.get(node);
-
             position[count][count] = nodeToGetPosition.getXpos();
             position[count][count+1] = nodeToGetPosition.getYpos();
             count++;

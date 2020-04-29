@@ -17,7 +17,6 @@ import androidx.annotation.Nullable;
 import com.cegepba.localization_app.Manager.PopManager;
 import com.cegepba.localization_app.Manager.RoomsManager;
 import com.cegepba.localization_app.Model.Floor;
-import com.cegepba.localization_app.Model.Node;
 import com.cegepba.localization_app.Model.Room;
 
 import java.util.ArrayList;
@@ -47,9 +46,8 @@ public class Map extends View {
     private float clickPositionX;
     private float clickPositionY;
     private int brightness(int pixel) { return (pixel >> 16)& 0xff; }
-    ArrayList<Node> nodesToDraw;
+    int[][] nodesToDraw;
     Paint paint = new Paint();
-    RouteFinder routeFinder = new RouteFinder();
 
     //private static String[] imageName = {"image1","image2","image3","image4","image5"};
 
@@ -69,7 +67,6 @@ public class Map extends View {
         roomsManager.setRoomsArray();
         rooms = roomsManager.getRooms();
         listFloors = new ArrayList<>();
-        nodesToDraw = new ArrayList<>();
 
         initFloorList();
         floorLevel = "Étage : " + listFloors.get(0).getFloorNum();
@@ -140,29 +137,35 @@ public class Map extends View {
     }
 
     private void drawTraject(Canvas canvas){
-        Paint paint = new Paint();
-
         /*if(currentFloor == 5) {
             paint.setColor(Color.BLUE);
         } else {
             paint.setColor(Color.GRAY);
         }*/
 
-        paint.setColor(Color.BLUE);
+        initDrawLine();
 
-        paint.setStrokeWidth(35);
+        if(nodesToDraw != null) {
+            for(int i = 0; i<nodesToDraw.length; i++) {
+                if(i+1 != nodesToDraw.length) {
+                    canvas.drawLine(nodesToDraw[i][i], nodesToDraw[i][i+1], nodesToDraw[i+1][i+1], nodesToDraw[i+1][i+2], paint);
 
-        for(int i = 0; i<nodesToDraw.size(); i++) {
-            if(i+1 != nodesToDraw.size()) {
-                canvas.drawLine(nodesToDraw.get(i).getXpos(), nodesToDraw.get(i).getYpos(), nodesToDraw.get(i+1).getXpos(), nodesToDraw.get(i+1).getYpos(), paint);
+                    //canvas.drawLine(nodesToDraw.get(i).getXpos(), nodesToDraw.get(i).getYpos(), nodesToDraw.get(i+1).getXpos(), nodesToDraw.get(i+1).getYpos(), paint);
+                }
             }
         }
 
         //canvas.drawLine(Xend, 3200, 2800, 3200, paint); // test
     }
 
-    public void setListNode(ArrayList<Node> nodes) {
-        nodesToDraw = nodes;
+    private void initDrawLine() {
+        Paint paint = new Paint();
+        paint.setColor(Color.BLUE);
+        paint.setStrokeWidth(35);
+    }
+
+    public void setPositionList(int[][] positions) {
+        nodesToDraw = positions;
     }
 
     private void drawText(Canvas canvas) {
