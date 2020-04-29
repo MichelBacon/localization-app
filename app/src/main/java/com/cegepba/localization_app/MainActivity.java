@@ -25,6 +25,7 @@ import com.estimote.mustard.rx_goodness.rx_requirements_wizard.RequirementsWizar
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -164,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void searchData(String query) {
 
-        db.collection("Rooms").whereEqualTo("name", query).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection("rooms").whereEqualTo("name", query.toLowerCase()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.getResult() != null){
@@ -175,6 +176,14 @@ public class MainActivity extends AppCompatActivity {
 
                     for(DocumentSnapshot doc : task.getResult()) {
                         Room room = doc.toObject(Room.class);
+                        DocumentReference docRefNode = room.getNodeRef();
+                        docRefNode.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                DocumentSnapshot doc = task.getResult();
+                                Node node = doc.toObject(Node.class);
+                            }
+                        });
                         Toast.makeText(getApplicationContext(),room.getDescription(),Toast.LENGTH_LONG).show();
                     }
                 }

@@ -71,7 +71,7 @@ public class AdminManager extends AppCompatActivity {
         int yBR = Integer.parseInt(edit_yBR.getText().toString());
         int yBL = Integer.parseInt(edit_yBL.getText().toString());
 
-        Room room = new Room(name, floor, description,beaconId,xBL,xBR,xTL,xTR,yTL,yTR,yBL,yBR);
+        Room room = new Room(null, name, floor, description,beaconId,xBL,xBR,xTL,xTR,yTL,yTR,yBL,yBR);
         db.collection("Rooms").add(room);
 
         Toast.makeText(this, "Ajout de local fait", Toast.LENGTH_SHORT).show();

@@ -1,8 +1,11 @@
 package com.cegepba.localization_app.Model;
 
+import com.google.firebase.firestore.DocumentReference;
+
 import java.io.Serializable;
 
 public class Room implements Serializable {
+    private DocumentReference nodeRef;
     private String name;
     private int floor;
     private String description;
@@ -18,9 +21,10 @@ public class Room implements Serializable {
 
     public Room(){}
 
-    public Room(String name, int floor, String description, String beaconId, int positionXBLeft,
+    public Room(DocumentReference nodeRef, String name, int floor, String description, String beaconId, int positionXBLeft,
                 int positionXBRight, int positionXTLeft, int positionXTRight, int positionYTLeft,
                 int positionYTRight, int positionYBLeft, int positionYBRight) {
+        this.nodeRef = nodeRef;
         this.name = name;
         this.description = description;
         this.beaconId = beaconId;
@@ -90,5 +94,9 @@ public class Room implements Serializable {
 
     public float getPositionYBRight() {
         return positionYBRight;
+    }
+
+    public DocumentReference getNodeRef() {
+        return nodeRef;
     }
 }
