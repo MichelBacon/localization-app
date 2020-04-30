@@ -65,17 +65,22 @@ public class RouteFinder {
                                     Log.d("TEST1234", road.toString());
 
                                     int[][] position = new int[road.size()][road.size()];
-                                    int count = 0;
-                                    for(String node : road) {
-                                        Node nodeToGetPosition = nodes.get(node);
-                                        Log.d("Count", "" + count);
-                                        Log.d("Size", "" + position.length);
-                                        position[count][count] = nodeToGetPosition.getXpos();
-                                        position[count][count+1] = nodeToGetPosition.getYpos();
-                                        Log.d("TEST12232342", "" + position[count][count+1]);
-                                        count++;
+                                    int xArrayPos = 0;
+                                    int yArrayPos;
+                                    try {
+                                        for(String node : road) {
+                                            yArrayPos =0;
+                                            Node nodeToGetPosition = nodes.get(node);
+                                            Log.d("Count", "" + xArrayPos);
+                                            Log.d("Size", "" + position.length);
+                                            position[xArrayPos][yArrayPos] = nodeToGetPosition.getXpos();
+                                            position[xArrayPos][yArrayPos + 1] = nodeToGetPosition.getYpos();
+                                            Log.d("TEST12232342", "" + position[xArrayPos][xArrayPos+1]);
+                                            xArrayPos++;
+                                        }
+                                    }catch(Exception e){
+                                        Log.d("123123", "e = " + e.getMessage());
                                     }
-
                                     firebaseCallback.onCallback(position);
                                 }
                             });

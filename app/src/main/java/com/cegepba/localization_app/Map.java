@@ -144,11 +144,16 @@ public class Map extends View {
         }*/
 
         initDrawLine();
-
+        int yPos;
         if(nodesToDraw != null) {
-            for(int i = 0; i<nodesToDraw.length; i++) {
-                if(i+1 != nodesToDraw.length) {
-                    canvas.drawLine(nodesToDraw[i][i], nodesToDraw[i][i+1], nodesToDraw[i+1][i+1], nodesToDraw[i+1][i+2], paint);
+            for(int xPos = 0; xPos<nodesToDraw.length; xPos++) {
+                if(xPos+1 != nodesToDraw.length) {
+                    yPos =0;
+                    Paint paint = new Paint();
+
+                    paint.setColor(Color.BLUE);
+                    paint.setStrokeWidth(35);
+                    canvas.drawLine(nodesToDraw[xPos][yPos], nodesToDraw[xPos][yPos+1], nodesToDraw[xPos+1][yPos], nodesToDraw[xPos+1][yPos+1], paint);
 
                     //canvas.drawLine(nodesToDraw.get(i).getXpos(), nodesToDraw.get(i).getYpos(), nodesToDraw.get(i+1).getXpos(), nodesToDraw.get(i+1).getYpos(), paint);
                 }
@@ -159,9 +164,7 @@ public class Map extends View {
     }
 
     private void initDrawLine() {
-        Paint paint = new Paint();
-        paint.setColor(Color.BLUE);
-        paint.setStrokeWidth(35);
+
     }
 
     public void setPositionList(int[][] positions) {
@@ -183,7 +186,8 @@ public class Map extends View {
         canvas.translate(mPositionX, mPositionY);
         canvas.scale(mScaleFactor/3, mScaleFactor/3);
         //TODO position bitmap = position user
-        canvas.drawBitmap(bitmapUserPosition, 3200, 6900, null);
+        if(nodesToDraw != null)
+           //canvas.drawBitmap(bitmapUserPosition, -nodesToDraw[0][0], -nodesToDraw[0][1], null);
         canvas.restore();
     }
 
