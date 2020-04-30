@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Node {
+    private String beaconId;
     private ArrayList<Connection> connections;
     private String name;
     private int xpos;
@@ -16,11 +17,12 @@ public class Node {
         connections = new ArrayList<>();
     }
 
-    public Node(String name, int xpos, int ypos) {
+    public Node(String name, int xpos, int ypos, String beaconId) {
         connections = new ArrayList<>();
         this.name = name;
         this.xpos = xpos;
         this.ypos = ypos;
+        this.beaconId = beaconId;
     }
 
     public String getName() {
@@ -62,5 +64,9 @@ public class Node {
 
     public ArrayList<Connection> getConnections() {
         return connections;
+    }
+
+    public String getBeaconId() {
+        return beaconId;
     }
 }
