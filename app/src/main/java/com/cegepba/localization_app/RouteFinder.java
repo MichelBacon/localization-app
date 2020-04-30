@@ -51,6 +51,7 @@ public class RouteFinder {
                             Collection connectionNodeQueryTasks = new ArrayList<Task>();
                             for (QueryDocumentSnapshot documentNode : Objects.requireNonNull(task.getResult())) {
                                 final Node node = documentNode.toObject(Node.class);
+                                Log.d("get floor", "" + node.getFloorNum());
                                 nodes.put(documentNode.getId(), node);
                                 DocumentReference docRefNode = documentNode.getReference();
 
@@ -64,18 +65,20 @@ public class RouteFinder {
                                     road = dijkstra(nodes, startNode, destinationNode);
                                     Log.d("TEST1234", road.toString());
 
-                                    int[][] position = new int[road.size()][road.size()];
+                                    int[][] position = new int[road.size()][road.size() +1];
                                     int xArrayPos = 0;
                                     int yArrayPos;
                                     try {
                                         for(String node : road) {
-                                            yArrayPos =0;
+                                            yArrayPos = 0;
                                             Node nodeToGetPosition = nodes.get(node);
-                                            Log.d("Count", "" + xArrayPos);
-                                            Log.d("Size", "" + position.length);
+                                            //Log.d("Count", "" + xArrayPos);
+                                            //Log.d("Size", "" + position.length);
                                             position[xArrayPos][yArrayPos] = nodeToGetPosition.getXpos();
                                             position[xArrayPos][yArrayPos + 1] = nodeToGetPosition.getYpos();
-                                            Log.d("TEST12232342", "" + position[xArrayPos][xArrayPos+1]);
+                                            position[xArrayPos][yArrayPos + 2] = nodeToGetPosition.getFloorNum();
+                                            Log.d("Activefloor dans RF", "" + nodeToGetPosition.getFloorNum());
+                                            //Log.d("TEST12232342", "" + position[xArrayPos][xArrayPos+1]);
                                             xArrayPos++;
                                         }
                                     }catch(Exception e){

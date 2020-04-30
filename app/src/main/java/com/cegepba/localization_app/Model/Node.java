@@ -11,16 +11,17 @@ public class Node {
     private String name;
     private int xpos;
     private int ypos;
-
+    private int floorNum;
     public Node() {
         connections = new ArrayList<>();
     }
 
-    public Node(String name, int xpos, int ypos) {
+    public Node(String name, int xpos, int ypos, int floorNum) {
         connections = new ArrayList<>();
         this.name = name;
         this.xpos = xpos;
         this.ypos = ypos;
+        this.floorNum = floorNum;
     }
 
     public String getName() {
@@ -42,7 +43,12 @@ public class Node {
     public int getYpos() {
         return ypos;
     }
-
+    public int getFloorNum() {
+        return floorNum;
+    }
+    public void setFloor(int inValue){
+        this.floorNum = inValue;
+    }
     public void setYpos(int ypos) {
         this.ypos = ypos;
     }
