@@ -2,18 +2,15 @@ package com.cegepba.localization_app.EstimoteBeacon;
 
 import android.content.Context;
 import android.util.Log;
-
 import com.estimote.proximity_sdk.api.EstimoteCloudCredentials;
 import com.estimote.proximity_sdk.api.ProximityObserver;
 import com.estimote.proximity_sdk.api.ProximityObserverBuilder;
 import com.estimote.proximity_sdk.api.ProximityZone;
 import com.estimote.proximity_sdk.api.ProximityZoneBuilder;
 import com.estimote.proximity_sdk.api.ProximityZoneContext;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
@@ -49,9 +46,7 @@ public class BeaconManager {
                         List<String> deskOwners = new ArrayList<>();
                         for (ProximityZoneContext context : contexts) {
                             deskOwners.add(context.getAttachments().get("desk-owner"));
-                            //Log.d("MainActivity", "In range of : " + context.getDeviceId());
                         }
-                        //Log.d("MainActivity", "In range of desks: " + deskOwners);
                         return null;
                     }
                 })

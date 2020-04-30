@@ -47,11 +47,7 @@ public class Map extends View {
     private ArrayList<Room> rooms;
     private float clickPositionX;
     private float clickPositionY;
-    private int brightness(int pixel) { return (pixel >> 16)& 0xff; }
     int[][] nodesToDraw;
-    Paint paint = new Paint();
-
-    //private static String[] imageName = {"image1","image2","image3","image4","image5"};
 
     //endregion
 
@@ -62,7 +58,6 @@ public class Map extends View {
     }
     public Map(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        //ActiveFloor = 0;
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.floors1);
         bitmapUserPosition = BitmapFactory.decodeResource(getResources(), R.drawable.location);
@@ -132,22 +127,9 @@ public class Map extends View {
 
     private void drawBitmap(Canvas canvas) {
         canvas.drawBitmap(bitmapMap, 0, 0, null);
-
-        //routeFinder.getPositionForRoad(routeFinder.getRoad());
-
-        /*if(Xstart != null && Ystart != null && Xend != null && Yend != null) {
-            drawTraject(canvas, Xstart,Ystart,Xend,Yend);
-        }*/
     }
 
     private void drawTraject(Canvas canvas){
-        /*if(currentFloor == 5) {
-            paint.setColor(Color.BLUE);
-        } else {
-            paint.setColor(Color.GRAY);
-        }*/
-
-        initDrawLine();
         int yPos;
         if(nodesToDraw != null) {
             for(int xPos = 0; xPos<nodesToDraw.length; xPos++) {
@@ -164,17 +146,9 @@ public class Map extends View {
                     Log.d("active floor dans draw", "" + ActiveFloor);
 
                     canvas.drawLine(nodesToDraw[xPos][yPos], nodesToDraw[xPos][yPos+1], nodesToDraw[xPos+1][yPos], nodesToDraw[xPos+1][yPos+1], paint);
-
-                    //canvas.drawLine(nodesToDraw.get(i).getXpos(), nodesToDraw.get(i).getYpos(), nodesToDraw.get(i+1).getXpos(), nodesToDraw.get(i+1).getYpos(), paint);
                 }
             }
         }
-
-        //canvas.drawLine(Xend, 3200, 2800, 3200, paint); // test
-    }
-
-    private void initDrawLine() {
-
     }
 
     public void setPositionList(int[][] positions) {
@@ -197,7 +171,7 @@ public class Map extends View {
         canvas.scale(mScaleFactor/3, mScaleFactor/3);
         //TODO position bitmap = position user
         if(nodesToDraw != null)
-           //canvas.drawBitmap(bitmapUserPosition, -nodesToDraw[0][0], -nodesToDraw[0][1], null);
+           canvas.drawBitmap(bitmapUserPosition, nodesToDraw[0][0], nodesToDraw[0][1], null);
         canvas.restore();
     }
 
@@ -232,8 +206,6 @@ public class Map extends View {
 
                 clickPositionX = tempX - refX;
                 clickPositionY = tempY - refY;
-
-                //paint((int)((refX - mPositionX)/mScaleFactor),(int)((refY - mPositionY/mScaleFactor));
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (!mScaleDetector.isInProgress()){
@@ -290,7 +262,6 @@ public class Map extends View {
 
     public void changeFloor(int floorNumber){
         ActiveFloor = floorNumber;
-        Log.d("active floor floor change", "" + ActiveFloor);
         addElementFromFloor(floorNumber-1);
         invalidate();
     }

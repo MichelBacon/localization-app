@@ -1,10 +1,6 @@
 package com.cegepba.localization_app.Model;
 
-import org.apache.http.conn.ConnectTimeoutException;
-
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class Node {
     private String beaconId;

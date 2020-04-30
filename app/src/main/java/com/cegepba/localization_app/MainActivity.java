@@ -1,8 +1,6 @@
 package com.cegepba.localization_app;
 
 import android.content.Intent;
-import android.graphics.Canvas;
-import android.icu.text.DateFormat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -23,14 +21,12 @@ import com.cegepba.localization_app.Model.Node;
 import com.cegepba.localization_app.Model.Room;
 import com.estimote.mustard.rx_goodness.rx_requirements_wizard.Requirement;
 import com.estimote.mustard.rx_goodness.rx_requirements_wizard.RequirementsWizardFactory;
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.ArrayList;
 import java.util.List;
 import kotlin.Unit;
@@ -207,7 +203,6 @@ public class MainActivity extends AppCompatActivity {
                                         });
 
                                     }
-                                        //map.drawBitmap(new Canvas(), startNode.getXpos(), startNode.getYpos(), destinationNode.getXpos(), destinationNode.getYpos());
                                 }
                             }
                         });

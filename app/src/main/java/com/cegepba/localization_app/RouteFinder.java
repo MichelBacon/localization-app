@@ -21,7 +21,6 @@ import java.util.Objects;
 public class RouteFinder {
 
     private FirebaseFirestore db;
-    private onMessageListener onMessageListener;
     HashMap<String, Node> nodes;
 
     public RouteFinder() {
@@ -72,13 +71,10 @@ public class RouteFinder {
                                         for(String node : road) {
                                             yArrayPos = 0;
                                             Node nodeToGetPosition = nodes.get(node);
-                                            //Log.d("Count", "" + xArrayPos);
-                                            //Log.d("Size", "" + position.length);
                                             position[xArrayPos][yArrayPos] = nodeToGetPosition.getXpos();
                                             position[xArrayPos][yArrayPos + 1] = nodeToGetPosition.getYpos();
                                             position[xArrayPos][yArrayPos + 2] = nodeToGetPosition.getFloorNum();
                                             Log.d("Activefloor dans RF", "" + nodeToGetPosition.getFloorNum());
-                                            //Log.d("TEST12232342", "" + position[xArrayPos][xArrayPos+1]);
                                             xArrayPos++;
                                         }
                                     }catch(Exception e){
@@ -90,7 +86,6 @@ public class RouteFinder {
                         }
                     }
                 });
-        //Log.d("ROAD", "test : " + road.toString());
     }
 
     private Task<QuerySnapshot> getTaskToAddConnectionToNode(DocumentReference docRefNode, final Node node) {
@@ -100,7 +95,6 @@ public class RouteFinder {
                 if(task.isSuccessful()) {
                     for (QueryDocumentSnapshot documentConnections : Objects.requireNonNull(task.getResult())) {
                         Connection connection = documentConnections.toObject(Connection.class);
-                        DocumentReference docRefConnection = connection.getConnectionRef();
                         node.addConnection(connection);
                     }
                 }
@@ -156,11 +150,6 @@ public class RouteFinder {
             }
         }
         return minDistanceNodeKey;
-    }
-
-    interface onMessageListener{
-        void onMessage(String msg);
-        void setNodeList(Node node, int nodePosition);
     }
 
     interface FirebaseCallback{
