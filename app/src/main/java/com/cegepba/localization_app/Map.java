@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -41,6 +42,7 @@ public class Map extends View {
     private String floorLevel;
     //TODO change init currentFloor with the current user floor
     private int currentFloor = 1;
+    private int ActiveFloor;
     private ArrayList<Floor> listFloors;
     private ArrayList<Room> rooms;
     private float clickPositionX;
@@ -60,6 +62,7 @@ public class Map extends View {
     }
     public Map(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        //ActiveFloor = 0;
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.floors1);
         bitmapUserPosition = BitmapFactory.decodeResource(getResources(), R.drawable.location);
@@ -120,9 +123,10 @@ public class Map extends View {
 
     private void drawObject(Canvas canvas) {
         drawBitmap(canvas);
-        if(currentFloor == 5) {
+        if(currentFloor == ActiveFloor) {
             drawUserPositionBitmap(canvas);
         }
+
         drawTraject(canvas);
     }
 
@@ -150,9 +154,15 @@ public class Map extends View {
                 if(xPos+1 != nodesToDraw.length) {
                     yPos =0;
                     Paint paint = new Paint();
-
-                    paint.setColor(Color.BLUE);
                     paint.setStrokeWidth(35);
+                    if(ActiveFloor == nodesToDraw[xPos][2]){
+                        paint.setColor(Color.BLUE);
+                    }else{
+                        paint.setColor(Color.GRAY);
+                    }
+                    Log.d("Array value", "" + nodesToDraw[xPos][yPos+2]);
+                    Log.d("active floor dans draw", "" + ActiveFloor);
+
                     canvas.drawLine(nodesToDraw[xPos][yPos], nodesToDraw[xPos][yPos+1], nodesToDraw[xPos+1][yPos], nodesToDraw[xPos+1][yPos+1], paint);
 
                     //canvas.drawLine(nodesToDraw.get(i).getXpos(), nodesToDraw.get(i).getYpos(), nodesToDraw.get(i+1).getXpos(), nodesToDraw.get(i+1).getYpos(), paint);
@@ -279,6 +289,8 @@ public class Map extends View {
     }
 
     public void changeFloor(int floorNumber){
+        ActiveFloor = floorNumber;
+        Log.d("active floor floor change", "" + ActiveFloor);
         addElementFromFloor(floorNumber-1);
         invalidate();
     }
