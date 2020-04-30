@@ -9,7 +9,6 @@ public class Room implements Serializable {
     private String name;
     private int floor;
     private String description;
-    private String beaconId;
     private int positionXBLeft;
     private int positionXBRight;
     private int positionXTLeft;
@@ -21,13 +20,12 @@ public class Room implements Serializable {
 
     public Room(){}
 
-    public Room(DocumentReference nodeRef, String name, int floor, String description, String beaconId, int positionXBLeft,
+    public Room(DocumentReference nodeRef, String name, int floor, String description, int positionXBLeft,
                 int positionXBRight, int positionXTLeft, int positionXTRight, int positionYTLeft,
                 int positionYTRight, int positionYBLeft, int positionYBRight) {
         this.nodeRef = nodeRef;
         this.name = name;
         this.description = description;
-        this.beaconId = beaconId;
         this.positionXBLeft = positionXBLeft;
         this.positionXBRight = positionXBRight;
         this.positionXTLeft = positionXTLeft;
@@ -59,10 +57,6 @@ public class Room implements Serializable {
         this.description = description;
     }
 
-    public String getBeaconId() {
-        return beaconId;
-    }
-
     public float getPositionXBLeft() {
         return positionXBLeft;
     }
@@ -78,7 +72,6 @@ public class Room implements Serializable {
     public float getPositionXTRight() {
         return positionXTRight;
     }
-
 
     public float getPositionYTLeft() {
         return positionYTLeft;
