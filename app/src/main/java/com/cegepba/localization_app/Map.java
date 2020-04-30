@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -60,7 +61,7 @@ public class Map extends View {
         super(context, attrs);
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.floors1);
-        bitmapUserPosition = BitmapFactory.decodeResource(getResources(), R.drawable.location);
+        bitmapUserPosition = BitmapFactory.decodeResource(getResources(), R.drawable.splash_logo);
         RoomsManager roomsManager = new RoomsManager();
         roomsManager.setRoomsArray();
         rooms = roomsManager.getRooms();
@@ -118,11 +119,10 @@ public class Map extends View {
 
     private void drawObject(Canvas canvas) {
         drawBitmap(canvas);
+        drawTraject(canvas);
         if(currentFloor == ActiveFloor) {
             drawUserPositionBitmap(canvas);
         }
-
-        drawTraject(canvas);
     }
 
     private void drawBitmap(Canvas canvas) {
@@ -142,8 +142,6 @@ public class Map extends View {
                     }else{
                         paint.setColor(Color.GRAY);
                     }
-                    Log.d("Array value", "" + nodesToDraw[xPos][yPos+2]);
-                    Log.d("active floor dans draw", "" + ActiveFloor);
 
                     canvas.drawLine(nodesToDraw[xPos][yPos], nodesToDraw[xPos][yPos+1], nodesToDraw[xPos+1][yPos], nodesToDraw[xPos+1][yPos+1], paint);
                 }
@@ -166,13 +164,11 @@ public class Map extends View {
     }
 
     private void drawUserPositionBitmap(Canvas canvas) {
-        canvas.save();
-        canvas.translate(mPositionX, mPositionY);
-        canvas.scale(mScaleFactor/3, mScaleFactor/3);
+        int buffer = 100;
         //TODO position bitmap = position user
-        if(nodesToDraw != null)
-           canvas.drawBitmap(bitmapUserPosition, nodesToDraw[0][0], nodesToDraw[0][1], null);
-        canvas.restore();
+        if(nodesToDraw != null) {
+            canvas.drawBitmap(bitmapUserPosition, null, new RectF(nodesToDraw[0][0]-buffer, nodesToDraw[0][1]-buffer, nodesToDraw[0][0]+buffer, nodesToDraw[0][1]+buffer), null);
+        }
     }
 
     //endregion
