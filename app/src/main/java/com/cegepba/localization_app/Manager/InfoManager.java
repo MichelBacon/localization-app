@@ -1,14 +1,11 @@
 package com.cegepba.localization_app.Manager;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-
 import com.cegepba.localization_app.R;
-
 import java.util.Objects;
 
 public class InfoManager extends AppCompatActivity {

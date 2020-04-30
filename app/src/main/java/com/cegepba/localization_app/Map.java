@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -16,8 +17,8 @@ import androidx.annotation.Nullable;
 
 import com.cegepba.localization_app.Manager.PopManager;
 import com.cegepba.localization_app.Manager.RoomsManager;
-import com.cegepba.localization_app.Model.Floors;
-import com.cegepba.localization_app.Model.Rooms;
+import com.cegepba.localization_app.Model.Floor;
+import com.cegepba.localization_app.Model.Room;
 
 import java.util.ArrayList;
 
@@ -41,14 +42,12 @@ public class Map extends View {
     private String floorLevel;
     //TODO change init currentFloor with the current user floor
     private int currentFloor = 1;
-    private ArrayList<Floors> listFloors;
-    private ArrayList<Rooms> rooms;
+    private int ActiveFloor;
+    private ArrayList<Floor> listFloors;
+    private ArrayList<Room> rooms;
     private float clickPositionX;
     private float clickPositionY;
-    private int brightness(int pixel) { return (pixel >> 16)& 0xff; }
-    Paint paint = new Paint();
-
-    //private static String[] imageName = {"image1","image2","image3","image4","image5"};
+    int[][] nodesToDraw;
 
     //endregion
 
@@ -107,27 +106,53 @@ public class Map extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvasWidth = 3050 * mScaleFactor;
-        canvasHeight = 2700 * mScaleFactor;
-        drawBitmap(canvas);
-        drawUserPositionBitmap(canvas);
-        drawText(canvas);
-    }
-
-    private void drawBitmap(Canvas canvas) {
         canvas.save();
         canvas.translate(mPositionX,mPositionY);
         canvas.scale(mScaleFactor, mScaleFactor);
-        canvas.drawBitmap(bitmapMap, 0, 0, null);
-        drawTraject(canvas, 1280,2472,1280,3200);
+        canvasWidth = 3050 * mScaleFactor;
+        canvasHeight = 2700 * mScaleFactor;
+        drawObject(canvas);
         canvas.restore();
+        drawText(canvas);
     }
-    private void drawTraject(Canvas canvas, int Xstart, int Ystart, int Xend, int Yend){
-        Paint paint = new Paint();
-        paint.setColor(Color.BLUE);
-        paint.setStrokeWidth(35);
-        canvas.drawLine(Xstart, Ystart, Xend, Yend, paint);
-        //canvas.drawLine(Xend, 3200, 2800, 3200, paint); // test
+
+    private void drawObject(Canvas canvas) {
+        drawBitmap(canvas);
+        if(currentFloor == ActiveFloor) {
+            drawUserPositionBitmap(canvas);
+        }
+
+        drawTraject(canvas);
+    }
+
+    private void drawBitmap(Canvas canvas) {
+        canvas.drawBitmap(bitmapMap, 0, 0, null);
+    }
+
+    private void drawTraject(Canvas canvas){
+        int yPos;
+        if(nodesToDraw != null) {
+            for(int xPos = 0; xPos<nodesToDraw.length; xPos++) {
+                if(xPos+1 != nodesToDraw.length) {
+                    yPos =0;
+                    Paint paint = new Paint();
+                    paint.setStrokeWidth(35);
+                    if(ActiveFloor == nodesToDraw[xPos][2]){
+                        paint.setColor(Color.BLUE);
+                    }else{
+                        paint.setColor(Color.GRAY);
+                    }
+                    Log.d("Array value", "" + nodesToDraw[xPos][yPos+2]);
+                    Log.d("active floor dans draw", "" + ActiveFloor);
+
+                    canvas.drawLine(nodesToDraw[xPos][yPos], nodesToDraw[xPos][yPos+1], nodesToDraw[xPos+1][yPos], nodesToDraw[xPos+1][yPos+1], paint);
+                }
+            }
+        }
+    }
+
+    public void setPositionList(int[][] positions) {
+        nodesToDraw = positions;
     }
 
     private void drawText(Canvas canvas) {
@@ -145,7 +170,8 @@ public class Map extends View {
         canvas.translate(mPositionX, mPositionY);
         canvas.scale(mScaleFactor/3, mScaleFactor/3);
         //TODO position bitmap = position user
-        canvas.drawBitmap(bitmapUserPosition, 3200, 6900, null);
+        if(nodesToDraw != null)
+           canvas.drawBitmap(bitmapUserPosition, nodesToDraw[0][0], nodesToDraw[0][1], null);
         canvas.restore();
     }
 
@@ -153,9 +179,12 @@ public class Map extends View {
 
     final GestureDetector gestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
         public void onLongPress(MotionEvent e) {
-            for (Rooms room : rooms) {
+            for (Room room : rooms) {
                 if(clickPositionIsInAClass(clickPositionX, clickPositionY, room) && room.getFloor() == currentFloor) {
                     Intent myIntent = new Intent(getContext(), PopManager.class);
+                    String docRefNode = room.getNodeRef().getPath();
+                    room.setNodeRef(null);
+                    myIntent.putExtra("path", docRefNode);
                     myIntent.putExtra("room", room);
                     getContext().startActivity(myIntent);
                 }
@@ -177,8 +206,6 @@ public class Map extends View {
 
                 clickPositionX = tempX - refX;
                 clickPositionY = tempY - refY;
-
-                //paint((int)((refX - mPositionX)/mScaleFactor),(int)((refY - mPositionY/mScaleFactor));
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (!mScaleDetector.isInProgress()){
@@ -211,22 +238,22 @@ public class Map extends View {
         return position;
     }
 
-    private boolean clickPositionIsInAClass(float clickPositionX, float clickPositionY, Rooms room) {
+    private boolean clickPositionIsInAClass(float clickPositionX, float clickPositionY, Room room) {
         return clickPositionXIsBetweenFirebasePosition(clickPositionX, room) && clickPositionYIsBetweenFirebasePosition(clickPositionY, room);
     }
 
-    private boolean clickPositionXIsBetweenFirebasePosition(float clickPositionX, Rooms room) {
-        return (clickPositionX <= room.getPositionYTLeft()) && (clickPositionX >= room.getPositionXTRight());
+    private boolean clickPositionXIsBetweenFirebasePosition(float clickPositionX, Room room) {
+        return (clickPositionX <= room.getPositionXTLeft()) && (clickPositionX >= room.getPositionXTRight());
     }
 
-    private boolean clickPositionYIsBetweenFirebasePosition(float clickPositionY, Rooms room) {
+    private boolean clickPositionYIsBetweenFirebasePosition(float clickPositionY, Room room) {
         return (clickPositionY <= room.getPositionYTLeft()) && (clickPositionY >= room.getPositionYBLeft());
     }
 
     private void initFloorList() {
         for (int i=0; i<5; i++){
             int j = i + 1;
-            Floors floors = new Floors();
+            Floor floors = new Floor();
             floors.setDrawable(getResources().getIdentifier("floors"+j,"drawable", getContext().getPackageName()));
             floors.setFloorNum(j);
             listFloors.add(floors);
@@ -234,6 +261,7 @@ public class Map extends View {
     }
 
     public void changeFloor(int floorNumber){
+        ActiveFloor = floorNumber;
         addElementFromFloor(floorNumber-1);
         invalidate();
     }

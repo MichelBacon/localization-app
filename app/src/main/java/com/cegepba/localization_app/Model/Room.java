@@ -1,12 +1,14 @@
 package com.cegepba.localization_app.Model;
 
+import com.google.firebase.firestore.DocumentReference;
+
 import java.io.Serializable;
 
-public class Rooms implements Serializable {
+public class Room implements Serializable {
+    private DocumentReference nodeRef;
     private String name;
     private int floor;
     private String description;
-    private String beaconId;
     private int positionXBLeft;
     private int positionXBRight;
     private int positionXTLeft;
@@ -16,14 +18,14 @@ public class Rooms implements Serializable {
     private int positionYBLeft;
     private int positionYBRight;
 
-    public Rooms(){}
+    public Room(){}
 
-    public Rooms(String name, int floor,String description, String beaconId, int positionXBLeft,
-                 int positionXBRight, int positionXTLeft, int positionXTRight, int positionYTLeft,
-                 int positionYTRight, int positionYBLeft, int positionYBRight) {
+    public Room(DocumentReference nodeRef, String name, int floor, String description, int positionXBLeft,
+                int positionXBRight, int positionXTLeft, int positionXTRight, int positionYTLeft,
+                int positionYTRight, int positionYBLeft, int positionYBRight) {
+        this.nodeRef = nodeRef;
         this.name = name;
         this.description = description;
-        this.beaconId = beaconId;
         this.positionXBLeft = positionXBLeft;
         this.positionXBRight = positionXBRight;
         this.positionXTLeft = positionXTLeft;
@@ -55,10 +57,6 @@ public class Rooms implements Serializable {
         this.description = description;
     }
 
-    public String getBeaconId() {
-        return beaconId;
-    }
-
     public float getPositionXBLeft() {
         return positionXBLeft;
     }
@@ -75,7 +73,6 @@ public class Rooms implements Serializable {
         return positionXTRight;
     }
 
-
     public float getPositionYTLeft() {
         return positionYTLeft;
     }
@@ -90,5 +87,13 @@ public class Rooms implements Serializable {
 
     public float getPositionYBRight() {
         return positionYBRight;
+    }
+
+    public DocumentReference getNodeRef() {
+        return nodeRef;
+    }
+
+    public void setNodeRef(DocumentReference nodeRef) {
+        this.nodeRef = nodeRef;
     }
 }

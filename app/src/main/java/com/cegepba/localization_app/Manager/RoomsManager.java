@@ -1,7 +1,7 @@
 package com.cegepba.localization_app.Manager;
 
 import androidx.annotation.NonNull;
-import com.cegepba.localization_app.Model.Rooms;
+import com.cegepba.localization_app.Model.Room;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -17,7 +17,7 @@ import java.util.Objects;
 public class RoomsManager {
 
     private FirebaseFirestore firebaseFirestore;
-    private ArrayList<Rooms> rooms;
+    private ArrayList<Room> rooms;
 
     public RoomsManager() {
         firebaseFirestore = FirebaseFirestore.getInstance();
@@ -28,18 +28,18 @@ public class RoomsManager {
     public void setRoomsArray() {
         rooms = new ArrayList<>();
 
-        firebaseFirestore.collection("Rooms")
+        firebaseFirestore.collection("rooms")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                                DocumentReference docRef = firebaseFirestore.collection("Rooms").document(document.getId());
+                                DocumentReference docRef = firebaseFirestore.collection("rooms").document(document.getId());
                                 docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        rooms.add(documentSnapshot.toObject(Rooms.class));
+                                        rooms.add(documentSnapshot.toObject(Room.class));
                                     }
                                 });
                             }
@@ -48,7 +48,7 @@ public class RoomsManager {
                 });
     }
 
-    public ArrayList<Rooms> getRooms() {
+    public ArrayList<Room> getRooms() {
         return rooms;
     }
 }

@@ -58,8 +58,8 @@
             android:ems="10"
             android:hint="@string/tage"
             android:inputType="textPersonName"
-            app:layout_constraintStart_toStartOf="@+id/editText14"
-            app:layout_constraintTop_toBottomOf="@+id/editText14" />
+            app:layout_constraintStart_toStartOf="@+id/editText_description"
+            app:layout_constraintTop_toBottomOf="@+id/editText_description" />
 
         <EditText
             android:id="@+id/xtopLeft"
@@ -154,17 +154,6 @@
             android:inputType="textPersonName"
             app:layout_constraintStart_toEndOf="@+id/xtopLeft"
             app:layout_constraintTop_toBottomOf="@+id/editText_floor" />
-
-        <EditText
-            android:id="@+id/editText14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:ems="10"
-            android:hint="Balise ID"
-            android:inputType="textPersonName"
-            app:layout_constraintStart_toStartOf="@+id/editText_description"
-            app:layout_constraintTop_toBottomOf="@+id/editText_description" />
 
         <Button
             android:id="@+id/btn_add_class"

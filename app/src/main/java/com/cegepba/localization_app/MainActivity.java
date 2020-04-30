@@ -17,14 +17,17 @@ import com.cegepba.localization_app.EstimoteBeacon.BeaconManager;
 import com.cegepba.localization_app.EstimoteBeacon.EstimoteCredentials;
 import com.cegepba.localization_app.Manager.InfoManager;
 import com.cegepba.localization_app.Manager.LegendManager;
-import com.cegepba.localization_app.Model.Rooms;
+import com.cegepba.localization_app.Model.Node;
+import com.cegepba.localization_app.Model.Room;
 import com.estimote.mustard.rx_goodness.rx_requirements_wizard.Requirement;
 import com.estimote.mustard.rx_goodness.rx_requirements_wizard.RequirementsWizardFactory;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import java.util.ArrayList;
 import java.util.List;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
@@ -39,8 +42,11 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonFloors5;
     private FirebaseFirestore db;
     private BeaconManager beaconManager;
-    private Node[] nodeList;
+    private SearchView searchView;
     Map map;
+    private String startNode;
+    private String destinationNode;
+    private ArrayList<Node> nodesToDraw;
     //endregion
 
     @Override
@@ -86,18 +92,9 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
 
-        nodeList = new Node[4];
-        RouteFinder rf = new RouteFinder(new RouteFinder.onMessageListener() {
-            @Override
-            public void onMessage(String msg) {
-                createMessage(msg);
-            }
+        RouteFinder rf = new RouteFinder();
 
-            @Override
-            public void setNodeList(Node node, int nodePosition) {
-                nodeList[nodePosition] = node;
-            }
-        });
+        Toast.makeText(this, "Veuillez entrer votre position", Toast.LENGTH_LONG).show();
     }
 
     private void startProximityContentManager() {
@@ -117,11 +114,24 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.drawer_menu, menu);
         MenuItem item = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+        searchView = (SearchView) MenuItemCompat.getActionView(item);
+        searchView.setQueryHint("Votre Position");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                searchData(query);
+                if(searchView.getQueryHint() != "Votre Destination") {
+                    searchData(query, true);
+                } else {
+                    searchData(query, false);
+                }
+
+                //TODO if not found then dont do the code
+
+                if (searchView.getQueryHint() != "Votre Destination") {
+                    changeSearchBarForDestination();
+                } else {
+                    exitSearchBar();
+                }
                 return false;
             }
 
@@ -131,6 +141,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         return true;
+    }
+
+    private void exitSearchBar() {
+        searchView.clearFocus();
+        searchView.setIconified(true);
+        searchView.onActionViewCollapsed();
+    }
+
+    private void changeSearchBarForDestination() {
+        searchView.setQuery("", false);
+        searchView.setQueryHint("Votre Destination");
+        Toast.makeText(getApplicationContext(), "Veuillez entrer votre destination", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -147,8 +169,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void searchData(String query) {
-        db.collection("Rooms").whereEqualTo("name", query).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+    private void searchData(String query, final Boolean isPosition) {
+
+        db.collection("rooms").whereEqualTo("name", query.toLowerCase()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.getResult() != null){
@@ -158,7 +181,31 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     for(DocumentSnapshot doc : task.getResult()) {
-                        Rooms room = doc.toObject(Rooms.class);
+                        Room room = doc.toObject(Room.class);
+                        DocumentReference docRefNode = room.getNodeRef();
+                        docRefNode.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                DocumentSnapshot doc = task.getResult();
+
+                                if(isPosition) {
+                                    startNode = doc.getId();
+                                } else {
+                                    destinationNode = doc.getId();
+                                    if(startNode != null && destinationNode != null){
+                                        RouteFinder rf = new RouteFinder();
+                                        nodesToDraw = new ArrayList<>();
+                                        rf.getRoad(startNode, destinationNode, new RouteFinder.FirebaseCallback() {
+                                            @Override
+                                            public void onCallback(int[][] list) {
+                                                map.setPositionList(list);
+                                            }
+                                        });
+
+                                    }
+                                }
+                            }
+                        });
                         Toast.makeText(getApplicationContext(),room.getDescription(),Toast.LENGTH_LONG).show();
                     }
                 }

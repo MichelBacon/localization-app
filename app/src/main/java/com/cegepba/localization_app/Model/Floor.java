@@ -1,13 +1,13 @@
 package com.cegepba.localization_app.Model;
 
-public class Floors {
+public class Floor {
 
     private int floorNum;
     private int drawable;
 
-    public Floors(){}
+    public Floor(){}
 
-    public Floors(int floorNum, int drawable) {
+    public Floor(int floorNum, int drawable) {
         this.floorNum = floorNum;
         this.drawable = drawable;
     }

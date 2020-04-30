@@ -1,126 +1,159 @@
 package com.cegepba.localization_app;
 
 import android.util.Log;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
-
+import com.cegepba.localization_app.Model.Connection;
+import com.cegepba.localization_app.Model.Node;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.List;
 import java.util.Objects;
 
 public class RouteFinder {
 
-    int  maxBeacon = 4;
-    FirebaseFirestore db;
-    int map[][];
-    int count = 0 ;
-    onMessageListener onMessageListener;
+    private FirebaseFirestore db;
+    HashMap<String, Node> nodes;
 
     public RouteFinder() {
+        nodes = new HashMap<>();
+        db = FirebaseFirestore.getInstance();
 
+        //FirestoreRepository repo = new FirestoreRepository();
+
+        /*repo.getNodeWithConnection().addOnCompleteListener(new OnCompleteListener<List<Node>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<Node>> task) {
+                for (Node nodeInList: task.getResult()) {
+                    Log.d("TEST123", nodeInList.toString());
+                }
+            }
+        });*/
     }
 
-    public RouteFinder(final RouteFinder.onMessageListener onMessageListener) {
-        map = new int[4][4];
-        this.onMessageListener = onMessageListener;
-        db = FirebaseFirestore.getInstance();
-        db.collection("Floors")
+    public void getRoad(final String startNode, final String destinationNode, final FirebaseCallback firebaseCallback) {
+
+        db.collection("nodes")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot documentFloor : Objects.requireNonNull(task.getResult())) {
-                                DocumentReference docRefFloor = documentFloor.getReference();
-                                docRefFloor.collection("Node").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onSuccess(QuerySnapshot documentSnapshot) {
-                                        for (QueryDocumentSnapshot documentNode : Objects.requireNonNull(documentSnapshot)) {
-                                            Node node = new Node();
-                                            node = documentNode.toObject(Node.class);
-                                                try {
-                                                    onMessageListener.setNodeList(node, count);
-                                                    Log.d("TOAST", documentNode.getId());
-                                                    map[count][0] = node.getDistanceToA();
-                                                    map[count][1] = node.getDistanceToB();
-                                                    map[count][2] = node.getDistanceToC();
-                                                    map[count][3] = node.getDistanceToD();
-                                                }catch (Exception e) {
-                                                    Log.d("TOAST missing data ",String.valueOf(count) + " node found");
-                                                    Log.d("TOAST missing data ",e.toString());
+                        if(task.isSuccessful()) {
+                            Collection connectionNodeQueryTasks = new ArrayList<Task>();
+                            for (QueryDocumentSnapshot documentNode : Objects.requireNonNull(task.getResult())) {
+                                final Node node = documentNode.toObject(Node.class);
+                                Log.d("get floor", "" + node.getFloorNum());
+                                nodes.put(documentNode.getId(), node);
+                                DocumentReference docRefNode = documentNode.getReference();
 
-                                                }
-                                            count++;
-                                        }
-                                    }
-                                });
+                                Task newTask = getTaskToAddConnectionToNode(docRefNode, node);
+                                connectionNodeQueryTasks.add(newTask);
                             }
-                        }else{
-                            String msg = task.getException().toString();
-                            onMessageListener.onMessage(msg);
+                            Tasks.whenAllComplete(connectionNodeQueryTasks).addOnCompleteListener(new OnCompleteListener() {
+                                @Override
+                                public void onComplete(@NonNull Task task) {
+                                    List<String> road;
+                                    road = dijkstra(nodes, startNode, destinationNode);
+                                    Log.d("TEST1234", road.toString());
+
+                                    int[][] position = new int[road.size()][road.size() +1];
+                                    int xArrayPos = 0;
+                                    int yArrayPos;
+                                    try {
+                                        for(String node : road) {
+                                            yArrayPos = 0;
+                                            Node nodeToGetPosition = nodes.get(node);
+                                            position[xArrayPos][yArrayPos] = nodeToGetPosition.getXpos();
+                                            position[xArrayPos][yArrayPos + 1] = nodeToGetPosition.getYpos();
+                                            position[xArrayPos][yArrayPos + 2] = nodeToGetPosition.getFloorNum();
+                                            Log.d("Activefloor dans RF", "" + nodeToGetPosition.getFloorNum());
+                                            xArrayPos++;
+                                        }
+                                    }catch(Exception e){
+                                        Log.d("123123", "e = " + e.getMessage());
+                                    }
+                                    firebaseCallback.onCallback(position);
+                                }
+                            });
                         }
-                        count = 0;
                     }
                 });
-        dijkstra(map, 0);
     }
 
-    private int minDistance(int[] distance, Boolean[] visited){
-        int minDistance = Integer.MAX_VALUE;
-        int index = -1;
-
-        for(int i=0;i<maxBeacon;i++){
-            if(!visited[i] && distance[i] <= minDistance){
-                minDistance = distance[i];
-                index = i;
-            }
-        }
-        return index;
-    }
-    public int[] dijkstra(int[][] map, int src ){
-
-        int[] distance = new int[maxBeacon];
-        Boolean[] visited = new Boolean[maxBeacon];
-        for(int i=0; i<maxBeacon; i++){
-            distance[i] = Integer.MAX_VALUE;
-            visited[i] = false;
-        }
-
-        distance[src] = 0;
-        for(int count = 0; count <maxBeacon; count++){
-            int shortestNode = minDistance(distance, visited);
-            visited[shortestNode] = true;
-            for(int i=0;i<maxBeacon;i++){
-                try {
-                    if (!visited[i] && map[shortestNode][i] != 0 && distance[shortestNode] != Integer.MAX_VALUE && distance[shortestNode] + map[shortestNode][i] < distance[i]) {
-
-                        distance[i] = distance[shortestNode] + map[shortestNode][i];
+    private Task<QuerySnapshot> getTaskToAddConnectionToNode(DocumentReference docRefNode, final Node node) {
+        return docRefNode.collection("connections").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()) {
+                    for (QueryDocumentSnapshot documentConnections : Objects.requireNonNull(task.getResult())) {
+                        Connection connection = documentConnections.toObject(Connection.class);
+                        node.addConnection(connection);
                     }
-                }catch (Exception e){
-                    System.out.println("Error " + e.getMessage());
                 }
             }
-
-        }
-        return distance;
+        });
     }
 
-//    public static void main(int  map[][]){
-//
-//    RouteFinder routeFinder =  new RouteFinder();
-//    routeFinder.dijkstra(map, 0);
-//    }
-    interface onMessageListener{
-        void onMessage(String msg);
-        void setNodeList(Node node, int nodePosition);
+    private List<String> dijkstra(HashMap<String, Node> nodes, String startNode, String destinationNode) {
+        //TODO verifier si il n'y a pas de chemin possible
+
+        HashMap<String, Integer> distance = new HashMap<>();
+        HashMap<String, String> previous = new HashMap<>();
+        List<String> unvisitedNode = new ArrayList<>();
+
+        for (Map.Entry<String, Node> node: nodes.entrySet()) {
+            distance.put(node.getKey(), Integer.MAX_VALUE);
+            previous.put(node.getKey(), null);
+            unvisitedNode.add(node.getKey());
+        }
+
+        distance.put(startNode, 0);
+        while(unvisitedNode.size() > 0) {
+            String currentNodeKey = findMinValue(distance, unvisitedNode);
+            unvisitedNode.remove(currentNodeKey);
+            for(Connection connection : nodes.get(currentNodeKey).getConnections()) {
+                Integer newDistance = connection.getDistance() + distance.get(currentNodeKey);
+                if(newDistance < distance.get(connection.getConnectionRef().getId())) {
+                    distance.put(connection.getConnectionRef().getId(), newDistance);
+                    previous.put(connection.getConnectionRef().getId(), currentNodeKey);
+                }
+            }
+        }
+
+        String currentNode = destinationNode;
+        List<String> roadMap = new ArrayList<>();
+        roadMap.add(currentNode);
+
+        while(!currentNode.equals(startNode)) {
+            currentNode = previous.get(currentNode);
+            roadMap.add(0, currentNode);
+        }
+
+        return roadMap;
+    }
+
+    private String findMinValue(HashMap<String, Integer> distance, List<String> unvisitedNode) {
+        String minDistanceNodeKey = null;
+        int minDistance = 0;
+        for (String unvisitedNodeKey: unvisitedNode) {
+            if (minDistanceNodeKey == null || minDistance > distance.get(unvisitedNodeKey)) {
+                minDistanceNodeKey = unvisitedNodeKey;
+                minDistance = distance.get(unvisitedNodeKey);
+            }
+        }
+        return minDistanceNodeKey;
+    }
+
+    interface FirebaseCallback{
+        void onCallback(int[][] list);
     }
 
 }
