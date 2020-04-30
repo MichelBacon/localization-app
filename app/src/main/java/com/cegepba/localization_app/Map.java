@@ -127,10 +127,6 @@ public class Map extends View {
             drawUserPositionBitmap(canvas);
         }
 
-//        Paint paint = new Paint();
-//        paint.setStrokeWidth(35);
-//        paint.setColor(Color.BLUE);
-//        canvas.drawLine(1280,3200,900,3200, paint);
         drawTraject(canvas);
     }
 
