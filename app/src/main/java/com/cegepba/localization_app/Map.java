@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -40,7 +41,6 @@ public class Map extends View {
     private float canvasWidth;
     private float canvasHeight;
     private String floorLevel;
-    //TODO change init currentFloor with the current user floor
     private int currentFloor = 1;
     private int ActiveFloor;
     private ArrayList<Floor> listFloors;
@@ -137,6 +137,7 @@ public class Map extends View {
                     yPos =0;
                     Paint paint = new Paint();
                     paint.setStrokeWidth(35);
+                    paint.setMaskFilter(new BlurMaskFilter(10, BlurMaskFilter.Blur.NORMAL));
                     if(ActiveFloor == nodesToDraw[xPos][2]){
                         paint.setColor(Color.BLUE);
                     }else{
@@ -182,11 +183,13 @@ public class Map extends View {
             for (Room room : rooms) {
                 if(clickPositionIsInAClass(clickPositionX, clickPositionY, room) && room.getFloor() == currentFloor) {
                     Intent myIntent = new Intent(getContext(), PopManager.class);
-                    String docRefNode = room.getNodeRef().getPath();
-                    room.setNodeRef(null);
-                    myIntent.putExtra("path", docRefNode);
-                    myIntent.putExtra("room", room);
-                    getContext().startActivity(myIntent);
+                    if(room.getNodeRef() != null) {
+                        String docRefNode = room.getNodeRef().getPath();
+                        room.setNodeRef(null);
+                        myIntent.putExtra("path", docRefNode);
+                        myIntent.putExtra("room", room);
+                        getContext().startActivity(myIntent);
+                    }
                 }
             }
         }

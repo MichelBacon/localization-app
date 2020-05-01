@@ -176,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
         searchView.clearFocus();
         searchView.setIconified(true);
         searchView.onActionViewCollapsed();
+        searchView.setQueryHint(getResources().getString(R.string.position));
     }
 
     private void changeSearchBarForDestination() {
