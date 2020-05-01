@@ -58,17 +58,44 @@ public class AdminManager extends AppCompatActivity {
     }
 
     private void addRoom() {
+        int xTR = 0;
+        int xTL = 0;
+        int xBR = 0;
+        int xBL = 0;
+        int yTR = 0;
+        int yTL = 0;
+        int yBR = 0;
+        int yBL = 0;
+        int floor = 1;
         String name = edit_name.getText().toString();
         String description = edit_description.getText().toString();
-        int floor = Integer.parseInt(edit_floor.getText().toString());
-        int xTR = Integer.parseInt(edit_xTR.getText().toString());
-        int xTL = Integer.parseInt(edit_xTL.getText().toString());
-        int xBR = Integer.parseInt(edit_xBR.getText().toString());
-        int xBL = Integer.parseInt(edit_xBL.getText().toString());
-        int yTR = Integer.parseInt(edit_yTR.getText().toString());
-        int yTL = Integer.parseInt(edit_yTL.getText().toString());
-        int yBR = Integer.parseInt(edit_yBR.getText().toString());
-        int yBL = Integer.parseInt(edit_yBL.getText().toString());
+        if(!edit_floor.getText().toString().equals("")){
+            floor = Integer.parseInt(edit_floor.getText().toString());
+        }
+        if(!edit_xTR.getText().toString().equals("")) {
+             xTR = Integer.parseInt(edit_xTR.getText().toString());
+        }
+        if(!edit_xTL.getText().toString().equals("")) {
+            xTL = Integer.parseInt(edit_xTL.getText().toString());
+        }
+        if(!edit_xBR.getText().toString().equals("")) {
+            xBR = Integer.parseInt(edit_xTL.getText().toString());
+        }
+        if(!edit_xBL.getText().toString().equals("")) {
+            xBL = Integer.parseInt(edit_xBL.getText().toString());
+        }
+        if(!edit_yTR.getText().toString().equals("")) {
+            yTR = Integer.parseInt(edit_yTR.getText().toString());
+        }
+        if(!edit_yTL.getText().toString().equals("")) {
+            yTL = Integer.parseInt(edit_yTL.getText().toString());
+        }
+        if(!edit_yBR.getText().toString().equals("")) {
+            yBR = Integer.parseInt(edit_yBR.getText().toString());
+        }
+        if(!edit_yBL.getText().toString().equals("")) {
+            yBL = Integer.parseInt(edit_yBL.getText().toString());
+        }
 
         final Room room = new Room(null, name, floor, description,xBL,xBR,xTL,xTR,yTL,yTR,yBL,yBR);
         db.collection("rooms").whereEqualTo("name", name)
