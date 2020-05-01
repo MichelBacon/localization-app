@@ -49,7 +49,6 @@ public class RouteFinder {
                             Collection connectionNodeQueryTasks = new ArrayList<Task>();
                             for (QueryDocumentSnapshot documentNode : Objects.requireNonNull(task.getResult())) {
                                 final Node node = documentNode.toObject(Node.class);
-                                Log.d("get floor", "" + node.getFloorNum());
                                 nodes.put(documentNode.getId(), node);
                                 DocumentReference docRefNode = documentNode.getReference();
 
@@ -61,7 +60,6 @@ public class RouteFinder {
                                 public void onComplete(@NonNull Task task) {
                                     List<String> road;
                                     road = dijkstra(nodes, startNode, destinationNode);
-                                    Log.d("TEST1234", road.toString());
 
                                     int[][] position = new int[road.size()][road.size() +1];
                                     int xArrayPos = 0;
@@ -73,7 +71,6 @@ public class RouteFinder {
                                             position[xArrayPos][yArrayPos] = nodeToGetPosition.getXpos();
                                             position[xArrayPos][yArrayPos + 1] = nodeToGetPosition.getYpos();
                                             position[xArrayPos][yArrayPos + 2] = nodeToGetPosition.getFloorNum();
-                                            Log.d("Activefloor dans RF", "" + nodeToGetPosition.getFloorNum());
                                             xArrayPos++;
                                         }
                                     }catch(Exception e){
