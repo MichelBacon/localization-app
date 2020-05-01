@@ -156,12 +156,12 @@ public class Map extends View {
 
     private void drawText(Canvas canvas) {
         Paint paint = new Paint();
-        paint.setColor(Color.GRAY);
+        paint.setColor(getResources().getColor(R.color.blue));
         paint.setTextSize(100);
         canvas.drawText(floorLevel, 100,100, paint);
-        canvas.drawText(Float.toString(mPositionX), 100,200, paint);
-        canvas.drawText(Float.toString(mPositionY), 100,300, paint);
-        canvas.drawText(Float.toString(mScaleFactor), 100,400, paint);
+        //canvas.drawText(Float.toString(mPositionX), 100,200, paint);
+        //canvas.drawText(Float.toString(mPositionY), 100,300, paint);
+        //canvas.drawText(Float.toString(mScaleFactor), 100,400, paint);
     }
 
     private void drawUserPositionBitmap(Canvas canvas) {
