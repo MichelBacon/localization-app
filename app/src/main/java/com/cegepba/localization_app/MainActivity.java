@@ -8,10 +8,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuItemCompat;
 import com.cegepba.localization_app.EstimoteBeacon.BeaconManager;
 import com.cegepba.localization_app.EstimoteBeacon.EstimoteCredentials;
@@ -46,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     Map map;
     private String startNode;
     private String destinationNode;
-    private ArrayList<Node> nodesToDraw;
+    private ProgressBar progressBar;
     //endregion
 
     @Override
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         buttonFloors3 = findViewById(R.id.btnFloor3);
         buttonFloors4 = findViewById(R.id.btnFloor4);
         buttonFloors5 = findViewById(R.id.btnFloor5);
+        progressBar = findViewById(R.id.progressBar);
         setListener1();
         setListener2();
         setListener3();
@@ -94,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
         RouteFinder rf = new RouteFinder();
 
-        Toast.makeText(this, "Veuillez entrer votre position", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, getResources().getString(R.string.enteryourposition), Toast.LENGTH_LONG).show();
     }
 
     private void startProximityContentManager() {
@@ -115,23 +118,41 @@ public class MainActivity extends AppCompatActivity {
         inflater.inflate(R.menu.drawer_menu, menu);
         MenuItem item = menu.findItem(R.id.action_search);
         searchView = (SearchView) MenuItemCompat.getActionView(item);
-        searchView.setQueryHint("Votre Position");
+        searchView.setQueryHint(getResources().getString(R.string.position));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                if(searchView.getQueryHint() != "Votre Destination") {
-                    searchData(query, true);
+                progressBar.setVisibility(View.VISIBLE);
+                if(searchView.getQueryHint() != getResources().getString(R.string.destination)) {
+                    searchData(query, true, new OnResultCallback() {
+                        @Override
+                        public void onSuccess() {
+                            updateSearchView();
+                            progressBar.setVisibility(View.INVISIBLE);
+                        }
+
+                        @Override
+                        public void onFailure() {
+                            createMessage(R.string.not_found);
+                            progressBar.setVisibility(View.INVISIBLE);
+                        }
+                    });
                 } else {
-                    searchData(query, false);
+                    searchData(query, false, new OnResultCallback() {
+                        @Override
+                        public void onSuccess() {
+                            updateSearchView();
+                            progressBar.setVisibility(View.INVISIBLE);
+                        }
+
+                        @Override
+                        public void onFailure() {
+                            createMessage(R.string.not_found);
+                            progressBar.setVisibility(View.INVISIBLE);
+                        }
+                    });
                 }
 
-                //TODO if not found then dont do the code
-
-                if (searchView.getQueryHint() != "Votre Destination") {
-                    changeSearchBarForDestination();
-                } else {
-                    exitSearchBar();
-                }
                 return false;
             }
 
@@ -143,6 +164,14 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    private void updateSearchView() {
+        if (searchView.getQueryHint() != getResources().getString(R.string.destination)) {
+            changeSearchBarForDestination();
+        } else {
+            exitSearchBar();
+        }
+    }
+
     private void exitSearchBar() {
         searchView.clearFocus();
         searchView.setIconified(true);
@@ -151,8 +180,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void changeSearchBarForDestination() {
         searchView.setQuery("", false);
-        searchView.setQueryHint("Votre Destination");
-        Toast.makeText(getApplicationContext(), "Veuillez entrer votre destination", Toast.LENGTH_LONG).show();
+        searchView.setQueryHint(getResources().getString(R.string.destination));
+        Toast.makeText(getApplicationContext(), getResources().getString(R.string.enteryourdestination), Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -169,18 +198,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void searchData(String query, final Boolean isPosition) {
-
+    private void searchData(String query, final Boolean isPosition, final OnResultCallback onResultCallback) {
         db.collection("rooms").whereEqualTo("name", query.toLowerCase()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.getResult() != null){
                     if(task.getResult().isEmpty())
                     {
-                        createMessage(R.string.not_found);
-                    }
-
-                    for(DocumentSnapshot doc : task.getResult()) {
+                        onResultCallback.onFailure();
+                    } else {
+                        DocumentSnapshot doc = task.getResult().getDocuments().get(0);
                         Room room = doc.toObject(Room.class);
                         DocumentReference docRefNode = room.getNodeRef();
                         docRefNode.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -190,18 +217,18 @@ public class MainActivity extends AppCompatActivity {
 
                                 if(isPosition) {
                                     startNode = doc.getId();
+                                    onResultCallback.onSuccess();
                                 } else {
                                     destinationNode = doc.getId();
                                     if(startNode != null && destinationNode != null){
                                         RouteFinder rf = new RouteFinder();
-                                        nodesToDraw = new ArrayList<>();
                                         rf.getRoad(startNode, destinationNode, new RouteFinder.FirebaseCallback() {
                                             @Override
                                             public void onCallback(int[][] list) {
                                                 map.setPositionList(list);
+                                                onResultCallback.onSuccess();
                                             }
                                         });
-
                                     }
                                 }
                             }
@@ -267,6 +294,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public interface OnResultCallback{
+        void onSuccess();
+        void onFailure();
+    }
 
     private void createMessage(int msg){
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();

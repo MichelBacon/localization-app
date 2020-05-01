@@ -40,7 +40,6 @@ public class RouteFinder {
     }
 
     public void getRoad(final String startNode, final String destinationNode, final FirebaseCallback firebaseCallback) {
-
         db.collection("nodes")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
