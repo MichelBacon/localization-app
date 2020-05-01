@@ -32,4 +32,8 @@
     <string name="ajout_de_locaux">Ajout de locaux</string>
     <string name="tage">Étage</string>
     <string name="not_found">Local inexistant</string>
+    <string name="position">Votre Position</string>
+    <string name="destination">Votre Destination</string>
+    <string name="enteryourposition">Veuillez entrer votre position</string>
+    <string name="enteryourdestination">Veuillez entrer votre destination</string>
 </resources>
