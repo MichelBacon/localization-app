@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.cegepba.localization_app.Model.Legends;
+import com.cegepba.localization_app.Model.Legend;
 import com.cegepba.localization_app.R;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -45,13 +45,13 @@ public class LegendManager extends AppCompatActivity {
     }
 
     private void setRecyclerView() {
-        Query query = firebaseFirestore.collection("Legends");
+        Query query = firebaseFirestore.collection("Legends").orderBy("name");
 
-        FirestoreRecyclerOptions<Legends> options = new FirestoreRecyclerOptions.Builder<Legends>()
-                .setQuery(query, Legends.class)
+        FirestoreRecyclerOptions<Legend> options = new FirestoreRecyclerOptions.Builder<Legend>()
+                .setQuery(query, Legend.class)
                 .build();
 
-        adapter = new FirestoreRecyclerAdapter<Legends, LegendsViewHolder>(options) {
+        adapter = new FirestoreRecyclerAdapter<Legend, LegendsViewHolder>(options) {
             @NonNull
             @Override
             public LegendsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -60,7 +60,7 @@ public class LegendManager extends AppCompatActivity {
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull LegendsViewHolder holder, int position, @NonNull Legends model) {
+            protected void onBindViewHolder(@NonNull LegendsViewHolder holder, int position, @NonNull Legend model) {
                 holder.textView_name.setTextColor(Color.parseColor(model.getColor()));
                 holder.textView_name.setText(model.getName());
             }

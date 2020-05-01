@@ -1,12 +1,12 @@
 package com.cegepba.localization_app.Model;
 
-public class Legends {
+public class Legend {
     private String Color;
     private String Name;
 
-    public Legends(){}
+    public Legend(){}
 
-    public Legends(String color, String name) {
+    public Legend(String color, String name) {
         this.Color = color;
         this.Name = name;
     }

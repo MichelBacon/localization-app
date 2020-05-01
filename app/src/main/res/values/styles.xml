@@ -18,4 +18,8 @@
         <item name="android:windowCloseOnTouchOutside">true</item>
     </style>
 
+    <style name="progressBar" parent="@style/Theme.AppCompat">
+        <item name="colorAccent">@color/blue</item>
+    </style>
+
 </resources>
