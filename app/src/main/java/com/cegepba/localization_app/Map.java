@@ -115,6 +115,7 @@ public class Map extends View {
         drawObject(canvas);
         canvas.restore();
         drawText(canvas);
+        invalidate();
     }
 
     private void drawObject(Canvas canvas) {
@@ -171,7 +172,6 @@ public class Map extends View {
             canvas.drawBitmap(bitmapUserPosition, null, new RectF(nodesToDraw[0][0]-buffer, nodesToDraw[0][1]-buffer, nodesToDraw[0][0]+buffer, nodesToDraw[0][1]+buffer), null);
         }
     }
-
     //endregion
 
     final GestureDetector gestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
@@ -236,7 +236,18 @@ public class Map extends View {
         }
         return position;
     }
-
+    public void cancelTraject() {
+        int[] oldUserPosition = new int[2];
+        oldUserPosition[0] = nodesToDraw[0][0];
+        oldUserPosition[1] = nodesToDraw[0][1];
+        nodesToDraw = new int[2][3];
+        nodesToDraw[0][0] = oldUserPosition[0];
+        nodesToDraw[0][1] = oldUserPosition[1];
+        nodesToDraw[0][2] = 1;
+        nodesToDraw[1][0] = oldUserPosition[0];
+        nodesToDraw[1][1] = oldUserPosition[1];
+        nodesToDraw[1][2] = 1;
+    }
     private boolean clickPositionIsInAClass(float clickPositionX, float clickPositionY, Room room) {
         return clickPositionXIsBetweenFirebasePosition(clickPositionX, room) && clickPositionYIsBetweenFirebasePosition(clickPositionY, room);
     }
