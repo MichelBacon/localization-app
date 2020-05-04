@@ -36,4 +36,5 @@
     <string name="destination">Votre Destination</string>
     <string name="enteryourposition">Veuillez entrer votre position</string>
     <string name="enteryourdestination">Veuillez entrer votre destination</string>
+    <string name="annuler_le_trajet">Annuler le trajet</string>
 </resources>
