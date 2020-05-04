@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private String startNode;
     private String destinationNode;
     private ProgressBar progressBar;
+    private MenuItem cancel;
     //endregion
 
     @Override
@@ -116,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.drawer_menu, menu);
+        cancel = menu.findItem(R.id.nav_cancel_traject);
+        cancel.setVisible(false);
         MenuItem item = menu.findItem(R.id.action_search);
         searchView = (SearchView) MenuItemCompat.getActionView(item);
         searchView.setQueryHint(getResources().getString(R.string.position));
@@ -194,6 +197,11 @@ public class MainActivity extends AppCompatActivity {
             case R.id.nav_legend:
                 showActivity(LegendManager.class);
                 return true;
+            case R.id.nav_cancel_traject:
+                map.cancelTraject();
+                cancel.setVisible(false);
+                createMessage(R.string.msg_trajet_annule);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -227,6 +235,7 @@ public class MainActivity extends AppCompatActivity {
                                             @Override
                                             public void onCallback(int[][] list) {
                                                 map.setPositionList(list);
+                                                cancel.setVisible(true);
                                                 onResultCallback.onSuccess();
                                             }
                                         });
