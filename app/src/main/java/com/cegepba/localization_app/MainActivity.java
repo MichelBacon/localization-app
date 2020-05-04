@@ -3,7 +3,6 @@ package com.cegepba.localization_app;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,13 +16,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuItemCompat;
 import com.cegepba.localization_app.EstimoteBeacon.BeaconManager;
 import com.cegepba.localization_app.EstimoteBeacon.EstimoteCredentials;
 import com.cegepba.localization_app.Manager.InfoManager;
 import com.cegepba.localization_app.Manager.LegendManager;
-import com.cegepba.localization_app.Model.Node;
 import com.cegepba.localization_app.Model.Room;
 import com.estimote.mustard.rx_goodness.rx_requirements_wizard.Requirement;
 import com.estimote.mustard.rx_goodness.rx_requirements_wizard.RequirementsWizardFactory;
@@ -33,13 +30,10 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-import java.util.ArrayList;
 import java.util.List;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
-
-//TODO https://stackoverflow.com/questions/18799216/how-to-make-a-edittext-box-in-a-dialog
 
 public class MainActivity extends AppCompatActivity {
     //region private variable
@@ -206,42 +200,50 @@ public class MainActivity extends AppCompatActivity {
                 createMessage(R.string.msg_trajet_annule);
                 return true;
             case R.id.nav_update_position:
-                AlertDialog.Builder alert = new AlertDialog.Builder(this);
-                final EditText edittext = new EditText(this);
-                alert.setTitle("Mettre à jour la position");
-                alert.setMessage("Veuillez entrer votre position");
-                alert.setView(edittext);
-
-                alert.setPositiveButton("Mettre à jour", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        progressBar.setVisibility(View.VISIBLE);
-                        String localName = edittext.getText().toString();
-                        searchData(localName, true, new OnResultCallback() {
-                            @Override
-                            public void onSuccess() {
-                                createMessage(R.string.msg_update_position);
-                                progressBar.setVisibility(View.INVISIBLE);
-                            }
-
-                            @Override
-                            public void onFailure() {
-                                progressBar.setVisibility(View.INVISIBLE);
-                            }
-                        }, true);
-                    }
-                });
-
-                alert.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        // what ever you want to do with No option.
-                    }
-                });
-
-                alert.show();
+                createAlertMessage();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void createAlertMessage() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        final EditText edittext = new EditText(this);
+        alert.setTitle("Mettre à jour la position");
+        alert.setMessage("Veuillez entrer votre position");
+        alert.setView(edittext);
+
+        alert.setPositiveButton("Mettre à jour", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                progressBar.setVisibility(View.VISIBLE);
+                String localName = edittext.getText().toString();
+                if(localName.equals("")){
+                    createMessage(R.string.msg_no_position_entered);
+                    progressBar.setVisibility(View.INVISIBLE);
+                } else {
+                    searchData(localName, true, new OnResultCallback() {
+                        @Override
+                        public void onSuccess() {
+                            createMessage(R.string.msg_update_position);
+                            progressBar.setVisibility(View.INVISIBLE);
+                        }
+
+                        @Override
+                        public void onFailure() {
+                            progressBar.setVisibility(View.INVISIBLE);
+                        }
+                    }, true);
+                }
+            }
+        });
+
+        alert.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+            }
+        });
+
+        alert.show();
     }
 
     private void searchData(String query, final Boolean isPosition, final OnResultCallback onResultCallback, final Boolean keepDestination) {
