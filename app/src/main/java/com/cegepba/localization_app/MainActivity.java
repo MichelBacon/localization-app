@@ -1,17 +1,21 @@
 package com.cegepba.localization_app;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuItemCompat;
@@ -35,21 +39,18 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 
+//TODO https://stackoverflow.com/questions/18799216/how-to-make-a-edittext-box-in-a-dialog
+
 public class MainActivity extends AppCompatActivity {
     //region private variable
-    private Button buttonFloors1;
-    private Button buttonFloors2;
-    private Button buttonFloors3;
-    private Button buttonFloors4;
-    private Button buttonFloors5;
+    private Button buttonFloors1, buttonFloors2, buttonFloors3, buttonFloors4, buttonFloors5;
     private FirebaseFirestore db;
     private BeaconManager beaconManager;
     private SearchView searchView;
     Map map;
-    private String startNode;
-    private String destinationNode;
+    private String startNode, destinationNode;
     private ProgressBar progressBar;
-    private MenuItem cancel;
+    private MenuItem cancel, updatePosition;
     //endregion
 
     @Override
@@ -119,6 +120,8 @@ public class MainActivity extends AppCompatActivity {
         inflater.inflate(R.menu.drawer_menu, menu);
         cancel = menu.findItem(R.id.nav_cancel_traject);
         cancel.setVisible(false);
+        updatePosition = menu.findItem(R.id.nav_update_position);
+        updatePosition.setVisible(false);
         MenuItem item = menu.findItem(R.id.action_search);
         searchView = (SearchView) MenuItemCompat.getActionView(item);
         searchView.setQueryHint(getResources().getString(R.string.position));
@@ -139,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
                             createMessage(R.string.not_found);
                             progressBar.setVisibility(View.INVISIBLE);
                         }
-                    });
+                    }, false);
                 } else {
                     searchData(query, false, new OnResultCallback() {
                         @Override
@@ -153,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
                             createMessage(R.string.not_found);
                             progressBar.setVisibility(View.INVISIBLE);
                         }
-                    });
+                    }, false);
                 }
 
                 return false;
@@ -202,12 +205,46 @@ public class MainActivity extends AppCompatActivity {
                 cancel.setVisible(false);
                 createMessage(R.string.msg_trajet_annule);
                 return true;
+            case R.id.nav_update_position:
+                AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                final EditText edittext = new EditText(this);
+                alert.setTitle("Mettre à jour la position");
+                alert.setMessage("Veuillez entrer votre position");
+                alert.setView(edittext);
+
+                alert.setPositiveButton("Mettre à jour", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        progressBar.setVisibility(View.VISIBLE);
+                        String localName = edittext.getText().toString();
+                        searchData(localName, true, new OnResultCallback() {
+                            @Override
+                            public void onSuccess() {
+                                createMessage(R.string.msg_update_position);
+                                progressBar.setVisibility(View.INVISIBLE);
+                            }
+
+                            @Override
+                            public void onFailure() {
+                                progressBar.setVisibility(View.INVISIBLE);
+                            }
+                        }, true);
+                    }
+                });
+
+                alert.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // what ever you want to do with No option.
+                    }
+                });
+
+                alert.show();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    private void searchData(String query, final Boolean isPosition, final OnResultCallback onResultCallback) {
+    private void searchData(String query, final Boolean isPosition, final OnResultCallback onResultCallback, final Boolean keepDestination) {
         db.collection("rooms").whereEqualTo("name", query.toLowerCase()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -224,21 +261,37 @@ public class MainActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                 DocumentSnapshot doc = task.getResult();
 
-                                if(isPosition) {
+                                if(keepDestination) {
                                     startNode = doc.getId();
-                                    onResultCallback.onSuccess();
-                                } else {
-                                    destinationNode = doc.getId();
-                                    if(startNode != null && destinationNode != null){
-                                        RouteFinder rf = new RouteFinder();
-                                        rf.getRoad(startNode, destinationNode, new RouteFinder.FirebaseCallback() {
-                                            @Override
-                                            public void onCallback(int[][] list) {
-                                                map.setPositionList(list);
-                                                cancel.setVisible(true);
-                                                onResultCallback.onSuccess();
-                                            }
-                                        });
+                                    RouteFinder rf = new RouteFinder();
+                                    rf.getRoad(startNode, destinationNode, new RouteFinder.FirebaseCallback() {
+                                        @Override
+                                        public void onCallback(int[][] list) {
+                                            map.setPositionList(list);
+                                            updatePosition.setVisible(true);
+                                            cancel.setVisible(true);
+                                            onResultCallback.onSuccess();
+                                        }
+                                    });
+                                }
+                                else {
+                                    if(isPosition) {
+                                        startNode = doc.getId();
+                                        onResultCallback.onSuccess();
+                                    } else {
+                                        destinationNode = doc.getId();
+                                        if(startNode != null && destinationNode != null){
+                                            RouteFinder rf = new RouteFinder();
+                                            rf.getRoad(startNode, destinationNode, new RouteFinder.FirebaseCallback() {
+                                                @Override
+                                                public void onCallback(int[][] list) {
+                                                    map.setPositionList(list);
+                                                    updatePosition.setVisible(true);
+                                                    cancel.setVisible(true);
+                                                    onResultCallback.onSuccess();
+                                                }
+                                            });
+                                        }
                                     }
                                 }
                             }
