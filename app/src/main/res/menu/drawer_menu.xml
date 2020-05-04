@@ -15,4 +15,7 @@
 
     <item android:id="@+id/nav_cancel_traject"
         android:title="@string/annuler_le_trajet"/>
+
+    <item android:id="@+id/nav_update_position"
+        android:title="@string/mettre_jour_la_position"/>
 </menu>
