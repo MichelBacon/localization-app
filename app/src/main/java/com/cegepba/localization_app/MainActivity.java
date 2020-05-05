@@ -35,7 +35,6 @@ import java.util.List;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
-import okhttp3.Route;
 
 public class MainActivity extends AppCompatActivity {
     //region private variable
@@ -98,7 +97,17 @@ public class MainActivity extends AppCompatActivity {
 
         RouteFinder rf = new RouteFinder();
 
-        Toast.makeText(this, getResources().getString(R.string.enteryourposition), Toast.LENGTH_LONG).show();
+        AlertDialog.Builder alert = new AlertDialog.Builder(new ContextThemeWrapper(MainActivity.this, R.style.myDialog));
+        alert.setTitle(getResources().getString(R.string.enteryourposition));
+        alert.setNeutralButton(android.R.string.ok,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = alert.create();
+        alert11.show();
     }
 
     private void startProximityContentManager() {
@@ -129,33 +138,9 @@ public class MainActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 progressBar.setVisibility(View.VISIBLE);
                 if(searchView.getQueryHint() != getResources().getString(R.string.destination)) {
-                    searchData(query, true, new OnResultCallback() {
-                        @Override
-                        public void onSuccess() {
-                            updateSearchView();
-                            progressBar.setVisibility(View.INVISIBLE);
-                        }
-
-                        @Override
-                        public void onFailure() {
-                            createMessage(R.string.not_found);
-                            progressBar.setVisibility(View.INVISIBLE);
-                        }
-                    }, false);
+                    searchDataWithPositionOrNot(true, query);
                 } else {
-                    searchData(query, false, new OnResultCallback() {
-                        @Override
-                        public void onSuccess() {
-                            updateSearchView();
-                            progressBar.setVisibility(View.INVISIBLE);
-                        }
-
-                        @Override
-                        public void onFailure() {
-                            createMessage(R.string.not_found);
-                            progressBar.setVisibility(View.INVISIBLE);
-                        }
-                    }, false);
+                    searchDataWithPositionOrNot(false, query);
                 }
 
                 return false;
@@ -167,6 +152,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         return true;
+    }
+
+    private void searchDataWithPositionOrNot(boolean isPosition, String query) {
+        searchData(query, isPosition, new OnResultCallback() {
+            @Override
+            public void onSuccess() {
+                updateSearchView();
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onFailure() {
+                createMessage(R.string.not_found);
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+        }, false);
     }
 
     private void updateSearchView() {
@@ -281,57 +282,63 @@ public class MainActivity extends AppCompatActivity {
                                 DocumentSnapshot doc = task.getResult();
 
                                 if(keepDestination) {
-                                    startNode = doc.getId();
-                                    rf.getRoad(startNode, destinationNode, true, new RouteFinder.FirebaseCallback() {
-                                        @Override
-                                        public void onCallback(int[][] list) {
-                                            map.setPositionList(list);
-                                            updatePosition.setVisible(true);
-                                            cancel.setVisible(true);
-                                            onResultCallback.onSuccess();
-                                        }
-
-                                        @Override
-                                        public void onCallback(boolean isNotOnGoodPath, int[][] list) {
-                                            map.setPositionList(list);
-                                            updatePosition.setVisible(true);
-                                            cancel.setVisible(true);
-
-                                            onResultCallback.onFailure();
-                                        }
-                                    });
+                                    getRoadWhenKeepingDestination(doc, onResultCallback);
                                 } else {
                                     if(isPosition) {
                                         startNode = doc.getId();
                                         onResultCallback.onSuccess();
                                     } else {
-                                        destinationNode = doc.getId();
-                                        if(startNode != null && destinationNode != null){
-                                            rf = new RouteFinder();
-                                            rf.getRoad(startNode, destinationNode, false, new RouteFinder.FirebaseCallback() {
-                                                @Override
-                                                public void onCallback(int[][] list) {
-                                                    map.setPositionList(list);
-                                                    updatePosition.setVisible(true);
-                                                    cancel.setVisible(true);
-                                                    onResultCallback.onSuccess();
-                                                }
-
-                                                @Override
-                                                public void onCallback(boolean isNotOnGoodPath, int[][] list) {
-
-                                                }
-                                            });
-                                        }
+                                        getRoadWhenHavingNewDestination(doc, onResultCallback);
                                     }
                                 }
                             }
                         });
-                        Toast.makeText(getApplicationContext(),room.getDescription(),Toast.LENGTH_LONG).show();
                     }
                 }
             }
         });
+    }
+
+    private void getRoadWhenKeepingDestination(DocumentSnapshot doc, final OnResultCallback onResultCallback) {
+        startNode = doc.getId();
+        rf.getRoad(startNode, destinationNode, true, new RouteFinder.FirebaseCallback() {
+            @Override
+            public void onCallback(int[][] list) {
+                map.setPositionList(list);
+                setButtonVisibile();
+                onResultCallback.onSuccess();
+            }
+
+            @Override
+            public void onCallback(boolean isNotOnGoodPath, int[][] list) {
+                map.setPositionList(list);
+                setButtonVisibile();
+                onResultCallback.onFailure();
+            }
+        });
+    }
+
+    private void getRoadWhenHavingNewDestination(DocumentSnapshot doc, final OnResultCallback onResultCallback) {
+        destinationNode = doc.getId();
+        if(startNode != null && destinationNode != null){
+            rf = new RouteFinder();
+            rf.getRoad(startNode, destinationNode, false, new RouteFinder.FirebaseCallback() {
+                @Override
+                public void onCallback(int[][] list) {
+                    map.setPositionList(list);
+                    setButtonVisibile();
+                    onResultCallback.onSuccess();
+                }
+
+                @Override
+                public void onCallback(boolean isNotOnGoodPath, int[][] list) {}
+            });
+        }
+    }
+
+    private void setButtonVisibile() {
+        updatePosition.setVisible(true);
+        cancel.setVisible(true);
     }
 
     private void showActivity(Class className) {
