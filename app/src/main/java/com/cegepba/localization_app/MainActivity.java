@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -34,6 +35,7 @@ import java.util.List;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
+import okhttp3.Route;
 
 public class MainActivity extends AppCompatActivity {
     //region private variable
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private String startNode, destinationNode;
     private ProgressBar progressBar;
     private MenuItem cancel, updatePosition;
+    RouteFinder rf;
     //endregion
 
     @Override
@@ -53,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         map = findViewById(R.id.map);
         db = FirebaseFirestore.getInstance();
+
+        rf = new RouteFinder();
 
         buttonFloors1 = findViewById(R.id.btnFloor1);
         buttonFloors2 = findViewById(R.id.btnFloor2);
@@ -231,6 +236,18 @@ public class MainActivity extends AppCompatActivity {
 
                         @Override
                         public void onFailure() {
+                            AlertDialog.Builder alert = new AlertDialog.Builder(new ContextThemeWrapper(MainActivity.this, R.style.myDialog));
+                            alert.setTitle(getResources().getString(R.string.msg_not_good_path));
+                            alert.setMessage("Vous êtes dans la mauvaise direction");
+                            alert.setNeutralButton(android.R.string.ok,
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                        }
+                                    });
+
+                            AlertDialog alert11 = alert.create();
+                            alert11.show();
                             progressBar.setVisibility(View.INVISIBLE);
                         }
                     }, true);
@@ -265,8 +282,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 if(keepDestination) {
                                     startNode = doc.getId();
-                                    RouteFinder rf = new RouteFinder();
-                                    rf.getRoad(startNode, destinationNode, new RouteFinder.FirebaseCallback() {
+                                    rf.getRoad(startNode, destinationNode, true, new RouteFinder.FirebaseCallback() {
                                         @Override
                                         public void onCallback(int[][] list) {
                                             map.setPositionList(list);
@@ -274,23 +290,36 @@ public class MainActivity extends AppCompatActivity {
                                             cancel.setVisible(true);
                                             onResultCallback.onSuccess();
                                         }
+
+                                        @Override
+                                        public void onCallback(boolean isNotOnGoodPath, int[][] list) {
+                                            map.setPositionList(list);
+                                            updatePosition.setVisible(true);
+                                            cancel.setVisible(true);
+
+                                            onResultCallback.onFailure();
+                                        }
                                     });
-                                }
-                                else {
+                                } else {
                                     if(isPosition) {
                                         startNode = doc.getId();
                                         onResultCallback.onSuccess();
                                     } else {
                                         destinationNode = doc.getId();
                                         if(startNode != null && destinationNode != null){
-                                            RouteFinder rf = new RouteFinder();
-                                            rf.getRoad(startNode, destinationNode, new RouteFinder.FirebaseCallback() {
+                                            rf = new RouteFinder();
+                                            rf.getRoad(startNode, destinationNode, false, new RouteFinder.FirebaseCallback() {
                                                 @Override
                                                 public void onCallback(int[][] list) {
                                                     map.setPositionList(list);
                                                     updatePosition.setVisible(true);
                                                     cancel.setVisible(true);
                                                     onResultCallback.onSuccess();
+                                                }
+
+                                                @Override
+                                                public void onCallback(boolean isNotOnGoodPath, int[][] list) {
+
                                                 }
                                             });
                                         }

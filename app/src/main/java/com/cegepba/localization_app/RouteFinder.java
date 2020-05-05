@@ -22,6 +22,7 @@ public class RouteFinder {
 
     private FirebaseFirestore db;
     HashMap<String, Node> nodes;
+    List<String> currentRoad;
 
     public RouteFinder() {
         nodes = new HashMap<>();
@@ -39,7 +40,7 @@ public class RouteFinder {
         });*/
     }
 
-    public void getRoad(final String startNode, final String destinationNode, final FirebaseCallback firebaseCallback) {
+    public void getRoad(final String startNode, final String destinationNode, final boolean isAnUpdate, final FirebaseCallback firebaseCallback) {
         db.collection("nodes")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -61,22 +62,71 @@ public class RouteFinder {
                                     List<String> road;
                                     road = dijkstra(nodes, startNode, destinationNode);
 
-                                    int[][] position = new int[road.size()][road.size() +1];
-                                    int xArrayPos = 0;
-                                    int yArrayPos;
-                                    try {
-                                        for(String node : road) {
-                                            yArrayPos = 0;
-                                            Node nodeToGetPosition = nodes.get(node);
-                                            position[xArrayPos][yArrayPos] = nodeToGetPosition.getXpos();
-                                            position[xArrayPos][yArrayPos + 1] = nodeToGetPosition.getYpos();
-                                            position[xArrayPos][yArrayPos + 2] = nodeToGetPosition.getFloorNum();
-                                            xArrayPos++;
-                                        }
-                                    }catch(Exception e){
-                                        Log.d("123123", "e = " + e.getMessage());
+                                    if(currentRoad == null) {
+                                        currentRoad = road;
                                     }
-                                    firebaseCallback.onCallback(position);
+
+                                    if(isAnUpdate) {
+                                        if(currentRoad.size() < road.size() || !currentRoad.get(currentRoad.size() - road.size()).equals(road.get(0))) {
+                                            int[][] position = new int[road.size()][road.size() +1];
+                                            int xArrayPos = 0;
+                                            int yArrayPos;
+                                            try {
+                                                for(String node : road) {
+                                                    yArrayPos = 0;
+                                                    Node nodeToGetPosition = nodes.get(node);
+                                                    position[xArrayPos][yArrayPos] = nodeToGetPosition.getXpos();
+                                                    position[xArrayPos][yArrayPos + 1] = nodeToGetPosition.getYpos();
+                                                    position[xArrayPos][yArrayPos + 2] = nodeToGetPosition.getFloorNum();
+                                                    xArrayPos++;
+                                                }
+                                            }catch(Exception e){
+                                                Log.d("123123", "e = " + e.getMessage());
+                                            }
+
+                                            currentRoad = road;
+
+                                            firebaseCallback.onCallback(true, position);
+                                        } else {
+                                            for(int i=0; i<currentRoad.size()-road.size();i++) {
+                                                currentRoad.remove(i);
+                                            }
+
+                                            int[][] position = new int[road.size()][road.size() +1];
+                                            int xArrayPos = 0;
+                                            int yArrayPos;
+                                            try {
+                                                for(String node : road) {
+                                                    yArrayPos = 0;
+                                                    Node nodeToGetPosition = nodes.get(node);
+                                                    position[xArrayPos][yArrayPos] = nodeToGetPosition.getXpos();
+                                                    position[xArrayPos][yArrayPos + 1] = nodeToGetPosition.getYpos();
+                                                    position[xArrayPos][yArrayPos + 2] = nodeToGetPosition.getFloorNum();
+                                                    xArrayPos++;
+                                                }
+                                            }catch(Exception e){
+                                                Log.d("123123", "e = " + e.getMessage());
+                                            }
+                                            firebaseCallback.onCallback(position);
+                                        }
+                                    } else {
+                                        int[][] position = new int[road.size()][road.size() +1];
+                                        int xArrayPos = 0;
+                                        int yArrayPos;
+                                        try {
+                                            for(String node : road) {
+                                                yArrayPos = 0;
+                                                Node nodeToGetPosition = nodes.get(node);
+                                                position[xArrayPos][yArrayPos] = nodeToGetPosition.getXpos();
+                                                position[xArrayPos][yArrayPos + 1] = nodeToGetPosition.getYpos();
+                                                position[xArrayPos][yArrayPos + 2] = nodeToGetPosition.getFloorNum();
+                                                xArrayPos++;
+                                            }
+                                        }catch(Exception e){
+                                            Log.d("123123", "e = " + e.getMessage());
+                                        }
+                                        firebaseCallback.onCallback(position);
+                                    }
                                 }
                             });
                         }
@@ -150,6 +200,7 @@ public class RouteFinder {
 
     interface FirebaseCallback{
         void onCallback(int[][] list);
+        void onCallback(boolean isNotOnGoodPath, int[][] list);
     }
 
 }
