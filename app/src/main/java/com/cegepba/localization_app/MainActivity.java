@@ -276,23 +276,27 @@ public class MainActivity extends AppCompatActivity {
                         DocumentSnapshot doc = task.getResult().getDocuments().get(0);
                         Room room = doc.toObject(Room.class);
                         DocumentReference docRefNode = room.getNodeRef();
-                        docRefNode.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                DocumentSnapshot doc = task.getResult();
+                        if(docRefNode != null) {
+                            docRefNode.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    DocumentSnapshot doc = task.getResult();
 
-                                if(keepDestination) {
-                                    getRoadWhenKeepingDestination(doc, onResultCallback);
-                                } else {
-                                    if(isPosition) {
-                                        startNode = doc.getId();
-                                        onResultCallback.onSuccess();
+                                    if(keepDestination) {
+                                        getRoadWhenKeepingDestination(doc, onResultCallback);
                                     } else {
-                                        getRoadWhenHavingNewDestination(doc, onResultCallback);
+                                        if(isPosition) {
+                                            startNode = doc.getId();
+                                            onResultCallback.onSuccess();
+                                        } else {
+                                            getRoadWhenHavingNewDestination(doc, onResultCallback);
+                                        }
                                     }
                                 }
-                            }
-                        });
+                            });
+                        } else {
+                            onResultCallback.onFailure();
+                        }
                     }
                 }
             }
