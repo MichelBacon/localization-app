@@ -238,43 +238,9 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(int numberOfTime) {
                             if(numberOfTime == 1) {
-                                AlertDialog.Builder alert = new AlertDialog.Builder(new ContextThemeWrapper(MainActivity.this, R.style.myDialog));
-                                alert.setTitle(getResources().getString(R.string.msg_not_good_path));
-                                alert.setMessage("Vous êtes dans la mauvaise direction");
-                                alert.setNeutralButton(android.R.string.ok,
-                                        new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int id) {
-                                                dialog.cancel();
-                                            }
-                                        });
-
-                                AlertDialog alert11 = alert.create();
-                                alert11.show();
-                                progressBar.setVisibility(View.INVISIBLE);
+                                createAlertBoxForRedirection();
                             } else if(numberOfTime > 1) {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(MainActivity.this, R.style.myDialog));
-
-                                builder.setTitle(getResources().getString(R.string.msg_not_good_path));
-                                builder.setMessage("Voulez-vous annuler votre trajet?");
-
-                                builder.setPositiveButton("OUI", new DialogInterface.OnClickListener() {
-
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        map.cancelTraject();
-                                    }
-                                });
-
-                                builder.setNegativeButton("NON", new DialogInterface.OnClickListener() {
-
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
-                                    }
-                                });
-
-                                AlertDialog alert = builder.create();
-                                alert.show();
-                                progressBar.setVisibility(View.INVISIBLE);
+                                createAlertBoxForAnotherRedirectionToCancel();
                             } else {
                                 progressBar.setVisibility(View.INVISIBLE);
                             }
@@ -285,11 +251,53 @@ public class MainActivity extends AppCompatActivity {
         });
 
         alert.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-            }
+            public void onClick(DialogInterface dialog, int whichButton) {dialog.cancel();}
         });
 
         alert.show();
+    }
+
+    private void createAlertBoxForRedirection() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(new ContextThemeWrapper(MainActivity.this, R.style.myDialog));
+        alert.setTitle(getResources().getString(R.string.msg_not_good_path));
+        alert.setMessage("Vous êtes dans la mauvaise direction");
+        alert.setNeutralButton(android.R.string.ok,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = alert.create();
+        alert11.show();
+        progressBar.setVisibility(View.INVISIBLE);
+    }
+
+    private void createAlertBoxForAnotherRedirectionToCancel() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(MainActivity.this, R.style.myDialog));
+
+        builder.setTitle(getResources().getString(R.string.msg_not_good_path));
+        builder.setMessage("Voulez-vous annuler votre trajet?");
+
+        builder.setPositiveButton("OUI", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                map.cancelTraject();
+                cancel.setVisible(false);
+            }
+        });
+
+        builder.setNegativeButton("NON", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alert = builder.create();
+        alert.show();
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     private void searchData(String query, final Boolean isPosition, final OnResultCallback onResultCallback, final Boolean keepDestination) {
@@ -383,8 +391,8 @@ public class MainActivity extends AppCompatActivity {
         buttonFloors1.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View view) {
-                map.changeFloor(1);
-                createMessage(R.string.Floor1st);
+            map.changeFloor(1);
+            createMessage(R.string.Floor1st);
             }
         });
     }
@@ -392,10 +400,8 @@ public class MainActivity extends AppCompatActivity {
         buttonFloors2.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View view) {
-
-                map.changeFloor(2);
-
-                createMessage(R.string.Floor2nd);
+            map.changeFloor(2);
+            createMessage(R.string.Floor2nd);
             }
         });
     }
@@ -403,8 +409,8 @@ public class MainActivity extends AppCompatActivity {
         buttonFloors3.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View view) {
-                map.changeFloor(3);
-                createMessage(R.string.Floor3rd);
+            map.changeFloor(3);
+            createMessage(R.string.Floor3rd);
             }
         });
     }
@@ -412,8 +418,8 @@ public class MainActivity extends AppCompatActivity {
         buttonFloors4.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View view) {
-                map.changeFloor(4);
-                createMessage(R.string.Floor4th);
+            map.changeFloor(4);
+            createMessage(R.string.Floor4th);
             }
         });
     }
@@ -421,8 +427,8 @@ public class MainActivity extends AppCompatActivity {
         buttonFloors5.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View view) {
-                map.changeFloor(5);
-                createMessage(R.string.Floor5th);
+            map.changeFloor(5);
+            createMessage(R.string.Floor5th);
             }
         });
     }

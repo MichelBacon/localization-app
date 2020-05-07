@@ -93,10 +93,11 @@ public class RouteFinder {
                                             for(int i=0; i<sizeOfSubtractionOfRoadAndCurrentRoad;i++) {
                                                 currentRoad.remove(i);
                                             }
-
+                                            numberOfTimeNotGood = 0;
                                             getPosition(firebaseCallback, road);
                                         }
                                     } else {
+                                        numberOfTimeNotGood = 0;
                                         getPosition(firebaseCallback, road);
                                     }
                                 }
