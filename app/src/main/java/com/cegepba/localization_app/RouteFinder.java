@@ -23,6 +23,7 @@ public class RouteFinder {
     private FirebaseFirestore db;
     private HashMap<String, Node> nodes;
     private List<String> currentRoad;
+    private int numberOfTimeNotGood = 0;
 
     public RouteFinder() {
         nodes = new HashMap<>();
@@ -86,8 +87,8 @@ public class RouteFinder {
                                             }
 
                                             currentRoad = road;
-
-                                            firebaseCallback.onCallback(true, position);
+                                            numberOfTimeNotGood += 1;
+                                            firebaseCallback.onCallback(true, position, numberOfTimeNotGood);
                                         } else {
                                             for(int i=0; i<sizeOfSubtractionOfRoadAndCurrentRoad;i++) {
                                                 currentRoad.remove(i);
@@ -188,6 +189,6 @@ public class RouteFinder {
 
     interface FirebaseCallback{
         void onCallback(int[][] list);
-        void onCallback(boolean isNotOnGoodPath, int[][] list);
+        void onCallback(boolean isNotOnGoodPath, int[][] list, int notOnGoodPathNumber);
     }
 }

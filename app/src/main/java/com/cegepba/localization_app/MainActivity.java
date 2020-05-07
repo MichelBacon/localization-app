@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure() {
+            public void onFailure(int numberOfTime) {
                 createMessage(R.string.not_found);
                 progressBar.setVisibility(View.INVISIBLE);
             }
@@ -236,20 +236,48 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onFailure() {
-                            AlertDialog.Builder alert = new AlertDialog.Builder(new ContextThemeWrapper(MainActivity.this, R.style.myDialog));
-                            alert.setTitle(getResources().getString(R.string.msg_not_good_path));
-                            alert.setMessage("Vous êtes dans la mauvaise direction");
-                            alert.setNeutralButton(android.R.string.ok,
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            dialog.cancel();
-                                        }
-                                    });
+                        public void onFailure(int numberOfTime) {
+                            if(numberOfTime == 1) {
+                                AlertDialog.Builder alert = new AlertDialog.Builder(new ContextThemeWrapper(MainActivity.this, R.style.myDialog));
+                                alert.setTitle(getResources().getString(R.string.msg_not_good_path));
+                                alert.setMessage("Vous êtes dans la mauvaise direction");
+                                alert.setNeutralButton(android.R.string.ok,
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                dialog.cancel();
+                                            }
+                                        });
 
-                            AlertDialog alert11 = alert.create();
-                            alert11.show();
-                            progressBar.setVisibility(View.INVISIBLE);
+                                AlertDialog alert11 = alert.create();
+                                alert11.show();
+                                progressBar.setVisibility(View.INVISIBLE);
+                            } else if(numberOfTime > 1) {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(MainActivity.this, R.style.myDialog));
+
+                                builder.setTitle(getResources().getString(R.string.msg_not_good_path));
+                                builder.setMessage("Voulez-vous annuler votre trajet?");
+
+                                builder.setPositiveButton("OUI", new DialogInterface.OnClickListener() {
+
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        map.cancelTraject();
+                                    }
+                                });
+
+                                builder.setNegativeButton("NON", new DialogInterface.OnClickListener() {
+
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                });
+
+                                AlertDialog alert = builder.create();
+                                alert.show();
+                                progressBar.setVisibility(View.INVISIBLE);
+                            } else {
+                                progressBar.setVisibility(View.INVISIBLE);
+                            }
                         }
                     }, true);
                 }
@@ -271,7 +299,7 @@ public class MainActivity extends AppCompatActivity {
                 if(task.getResult() != null){
                     if(task.getResult().isEmpty())
                     {
-                        onResultCallback.onFailure();
+                        onResultCallback.onFailure(0);
                     } else {
                         DocumentSnapshot doc = task.getResult().getDocuments().get(0);
                         Room room = doc.toObject(Room.class);
@@ -295,7 +323,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             });
                         } else {
-                            onResultCallback.onFailure();
+                            onResultCallback.onFailure(0);
                         }
                     }
                 }
@@ -314,10 +342,10 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCallback(boolean isNotOnGoodPath, int[][] list) {
+            public void onCallback(boolean isNotOnGoodPath, int[][] list, int notOnGoodPathNumber) {
                 map.setPositionList(list);
                 setButtonVisibile();
-                onResultCallback.onFailure();
+                onResultCallback.onFailure(notOnGoodPathNumber);
             }
         });
     }
@@ -335,7 +363,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onCallback(boolean isNotOnGoodPath, int[][] list) {}
+                public void onCallback(boolean isNotOnGoodPath, int[][] list, int notOnGoodPathNumber) {}
             });
         }
     }
@@ -401,7 +429,7 @@ public class MainActivity extends AppCompatActivity {
 
     public interface OnResultCallback{
         void onSuccess();
-        void onFailure();
+        void onFailure(int numberOfTime);
     }
 
     private void createMessage(int msg){
