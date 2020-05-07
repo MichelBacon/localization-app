@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private String startNode, destinationNode;
     private ProgressBar progressBar;
     private MenuItem cancel, updatePosition;
+    RouteFinder rf;
     //endregion
 
     @Override
@@ -53,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         map = findViewById(R.id.map);
         db = FirebaseFirestore.getInstance();
+
+        rf = new RouteFinder();
 
         buttonFloors1 = findViewById(R.id.btnFloor1);
         buttonFloors2 = findViewById(R.id.btnFloor2);
@@ -93,7 +97,17 @@ public class MainActivity extends AppCompatActivity {
 
         RouteFinder rf = new RouteFinder();
 
-        Toast.makeText(this, getResources().getString(R.string.enteryourposition), Toast.LENGTH_LONG).show();
+        AlertDialog.Builder alert = new AlertDialog.Builder(new ContextThemeWrapper(MainActivity.this, R.style.myDialog));
+        alert.setTitle(getResources().getString(R.string.enteryourposition));
+        alert.setNeutralButton(android.R.string.ok,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = alert.create();
+        alert11.show();
     }
 
     private void startProximityContentManager() {
@@ -124,33 +138,9 @@ public class MainActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 progressBar.setVisibility(View.VISIBLE);
                 if(searchView.getQueryHint() != getResources().getString(R.string.destination)) {
-                    searchData(query, true, new OnResultCallback() {
-                        @Override
-                        public void onSuccess() {
-                            updateSearchView();
-                            progressBar.setVisibility(View.INVISIBLE);
-                        }
-
-                        @Override
-                        public void onFailure() {
-                            createMessage(R.string.not_found);
-                            progressBar.setVisibility(View.INVISIBLE);
-                        }
-                    }, false);
+                    searchDataWithPositionOrNot(true, query);
                 } else {
-                    searchData(query, false, new OnResultCallback() {
-                        @Override
-                        public void onSuccess() {
-                            updateSearchView();
-                            progressBar.setVisibility(View.INVISIBLE);
-                        }
-
-                        @Override
-                        public void onFailure() {
-                            createMessage(R.string.not_found);
-                            progressBar.setVisibility(View.INVISIBLE);
-                        }
-                    }, false);
+                    searchDataWithPositionOrNot(false, query);
                 }
 
                 return false;
@@ -162,6 +152,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         return true;
+    }
+
+    private void searchDataWithPositionOrNot(boolean isPosition, String query) {
+        searchData(query, isPosition, new OnResultCallback() {
+            @Override
+            public void onSuccess() {
+                updateSearchView();
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onFailure(int numberOfTime) {
+                createMessage(R.string.not_found);
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+        }, false);
     }
 
     private void updateSearchView() {
@@ -230,8 +236,14 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onFailure() {
-                            progressBar.setVisibility(View.INVISIBLE);
+                        public void onFailure(int numberOfTime) {
+                            if(numberOfTime == 1) {
+                                createAlertBoxForRedirection();
+                            } else if(numberOfTime > 1) {
+                                createAlertBoxForAnotherRedirectionToCancel();
+                            } else {
+                                progressBar.setVisibility(View.INVISIBLE);
+                            }
                         }
                     }, true);
                 }
@@ -239,11 +251,53 @@ public class MainActivity extends AppCompatActivity {
         });
 
         alert.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-            }
+            public void onClick(DialogInterface dialog, int whichButton) {dialog.cancel();}
         });
 
         alert.show();
+    }
+
+    private void createAlertBoxForRedirection() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(new ContextThemeWrapper(MainActivity.this, R.style.myDialog));
+        alert.setTitle(getResources().getString(R.string.msg_not_good_path));
+        alert.setMessage("Vous êtes dans la mauvaise direction");
+        alert.setNeutralButton(android.R.string.ok,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = alert.create();
+        alert11.show();
+        progressBar.setVisibility(View.INVISIBLE);
+    }
+
+    private void createAlertBoxForAnotherRedirectionToCancel() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(MainActivity.this, R.style.myDialog));
+
+        builder.setTitle(getResources().getString(R.string.msg_not_good_path));
+        builder.setMessage("Voulez-vous annuler votre trajet?");
+
+        builder.setPositiveButton("OUI", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                map.cancelTraject();
+                cancel.setVisible(false);
+            }
+        });
+
+        builder.setNegativeButton("NON", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alert = builder.create();
+        alert.show();
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     private void searchData(String query, final Boolean isPosition, final OnResultCallback onResultCallback, final Boolean keepDestination) {
@@ -253,56 +307,78 @@ public class MainActivity extends AppCompatActivity {
                 if(task.getResult() != null){
                     if(task.getResult().isEmpty())
                     {
-                        onResultCallback.onFailure();
+                        onResultCallback.onFailure(0);
                     } else {
                         DocumentSnapshot doc = task.getResult().getDocuments().get(0);
                         Room room = doc.toObject(Room.class);
                         DocumentReference docRefNode = room.getNodeRef();
-                        docRefNode.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                DocumentSnapshot doc = task.getResult();
+                        if(docRefNode != null) {
+                            docRefNode.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    DocumentSnapshot doc = task.getResult();
 
-                                if(keepDestination) {
-                                    startNode = doc.getId();
-                                    RouteFinder rf = new RouteFinder();
-                                    rf.getRoad(startNode, destinationNode, new RouteFinder.FirebaseCallback() {
-                                        @Override
-                                        public void onCallback(int[][] list) {
-                                            map.setPositionList(list);
-                                            updatePosition.setVisible(true);
-                                            cancel.setVisible(true);
-                                            onResultCallback.onSuccess();
-                                        }
-                                    });
-                                }
-                                else {
-                                    if(isPosition) {
-                                        startNode = doc.getId();
-                                        onResultCallback.onSuccess();
+                                    if(keepDestination) {
+                                        getRoadWhenKeepingDestination(doc, onResultCallback);
                                     } else {
-                                        destinationNode = doc.getId();
-                                        if(startNode != null && destinationNode != null){
-                                            RouteFinder rf = new RouteFinder();
-                                            rf.getRoad(startNode, destinationNode, new RouteFinder.FirebaseCallback() {
-                                                @Override
-                                                public void onCallback(int[][] list) {
-                                                    map.setPositionList(list);
-                                                    updatePosition.setVisible(true);
-                                                    cancel.setVisible(true);
-                                                    onResultCallback.onSuccess();
-                                                }
-                                            });
+                                        if(isPosition) {
+                                            startNode = doc.getId();
+                                            onResultCallback.onSuccess();
+                                        } else {
+                                            getRoadWhenHavingNewDestination(doc, onResultCallback);
                                         }
                                     }
                                 }
-                            }
-                        });
-                        Toast.makeText(getApplicationContext(),room.getDescription(),Toast.LENGTH_LONG).show();
+                            });
+                        } else {
+                            onResultCallback.onFailure(0);
+                        }
                     }
                 }
             }
         });
+    }
+
+    private void getRoadWhenKeepingDestination(DocumentSnapshot doc, final OnResultCallback onResultCallback) {
+        startNode = doc.getId();
+        rf.getRoad(startNode, destinationNode, true, new RouteFinder.FirebaseCallback() {
+            @Override
+            public void onCallback(int[][] list) {
+                map.setPositionList(list);
+                setButtonVisibile();
+                onResultCallback.onSuccess();
+            }
+
+            @Override
+            public void onCallback(boolean isNotOnGoodPath, int[][] list, int notOnGoodPathNumber) {
+                map.setPositionList(list);
+                setButtonVisibile();
+                onResultCallback.onFailure(notOnGoodPathNumber);
+            }
+        });
+    }
+
+    private void getRoadWhenHavingNewDestination(DocumentSnapshot doc, final OnResultCallback onResultCallback) {
+        destinationNode = doc.getId();
+        if(startNode != null && destinationNode != null){
+            rf = new RouteFinder();
+            rf.getRoad(startNode, destinationNode, false, new RouteFinder.FirebaseCallback() {
+                @Override
+                public void onCallback(int[][] list) {
+                    map.setPositionList(list);
+                    setButtonVisibile();
+                    onResultCallback.onSuccess();
+                }
+
+                @Override
+                public void onCallback(boolean isNotOnGoodPath, int[][] list, int notOnGoodPathNumber) {}
+            });
+        }
+    }
+
+    private void setButtonVisibile() {
+        updatePosition.setVisible(true);
+        cancel.setVisible(true);
     }
 
     private void showActivity(Class className) {
@@ -315,8 +391,8 @@ public class MainActivity extends AppCompatActivity {
         buttonFloors1.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View view) {
-                map.changeFloor(1);
-                createMessage(R.string.Floor1st);
+            map.changeFloor(1);
+            createMessage(R.string.Floor1st);
             }
         });
     }
@@ -324,10 +400,8 @@ public class MainActivity extends AppCompatActivity {
         buttonFloors2.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View view) {
-
-                map.changeFloor(2);
-
-                createMessage(R.string.Floor2nd);
+            map.changeFloor(2);
+            createMessage(R.string.Floor2nd);
             }
         });
     }
@@ -335,8 +409,8 @@ public class MainActivity extends AppCompatActivity {
         buttonFloors3.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View view) {
-                map.changeFloor(3);
-                createMessage(R.string.Floor3rd);
+            map.changeFloor(3);
+            createMessage(R.string.Floor3rd);
             }
         });
     }
@@ -344,8 +418,8 @@ public class MainActivity extends AppCompatActivity {
         buttonFloors4.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View view) {
-                map.changeFloor(4);
-                createMessage(R.string.Floor4th);
+            map.changeFloor(4);
+            createMessage(R.string.Floor4th);
             }
         });
     }
@@ -353,15 +427,15 @@ public class MainActivity extends AppCompatActivity {
         buttonFloors5.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View view) {
-                map.changeFloor(5);
-                createMessage(R.string.Floor5th);
+            map.changeFloor(5);
+            createMessage(R.string.Floor5th);
             }
         });
     }
 
     public interface OnResultCallback{
         void onSuccess();
-        void onFailure();
+        void onFailure(int numberOfTime);
     }
 
     private void createMessage(int msg){

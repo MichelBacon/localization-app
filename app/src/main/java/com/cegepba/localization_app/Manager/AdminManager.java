@@ -73,28 +73,28 @@ public class AdminManager extends AppCompatActivity {
             floor = Integer.parseInt(edit_floor.getText().toString());
         }
         if(!edit_xTR.getText().toString().equals("")) {
-             xTR = Integer.parseInt(edit_xTR.getText().toString());
+            xTR = Integer.parseInt(edit_xTR.getText().toString())*-1;
         }
         if(!edit_xTL.getText().toString().equals("")) {
-            xTL = Integer.parseInt(edit_xTL.getText().toString());
+            xTL = Integer.parseInt(edit_xTL.getText().toString())*-1;
         }
         if(!edit_xBR.getText().toString().equals("")) {
-            xBR = Integer.parseInt(edit_xTL.getText().toString());
+            xBR = Integer.parseInt(edit_xBR.getText().toString())*-1;
         }
         if(!edit_xBL.getText().toString().equals("")) {
-            xBL = Integer.parseInt(edit_xBL.getText().toString());
+            xBL = Integer.parseInt(edit_xBL.getText().toString())*-1;
         }
         if(!edit_yTR.getText().toString().equals("")) {
-            yTR = Integer.parseInt(edit_yTR.getText().toString());
+            yTR = Integer.parseInt(edit_yTR.getText().toString())*-1;
         }
         if(!edit_yTL.getText().toString().equals("")) {
-            yTL = Integer.parseInt(edit_yTL.getText().toString());
+            yTL = Integer.parseInt(edit_yTL.getText().toString())*-1;
         }
         if(!edit_yBR.getText().toString().equals("")) {
-            yBR = Integer.parseInt(edit_yBR.getText().toString());
+            yBR = Integer.parseInt(edit_yBR.getText().toString())*-1;
         }
         if(!edit_yBL.getText().toString().equals("")) {
-            yBL = Integer.parseInt(edit_yBL.getText().toString());
+            yBL = Integer.parseInt(edit_yBL.getText().toString())*-1;
         }
 
         final Room room = new Room(null, name, floor, description,xBL,xBR,xTL,xTR,yTL,yTR,yBL,yBR);
