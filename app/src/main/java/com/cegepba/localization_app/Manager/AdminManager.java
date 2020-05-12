@@ -1,12 +1,18 @@
 package com.cegepba.localization_app.Manager;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.cegepba.localization_app.MainActivity;
 import com.cegepba.localization_app.Model.Room;
 import com.cegepba.localization_app.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -105,8 +111,27 @@ public class AdminManager extends AppCompatActivity {
                       public void onComplete(@NonNull Task<QuerySnapshot> task) {
                           if(task.getResult() != null){
                               if(task.getResult().isEmpty()) {
-                                  db.collection("rooms").add(room);
-                                  Toast.makeText(getApplicationContext(), "Ajout de local fait", Toast.LENGTH_SHORT).show();
+                                  AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(AdminManager.this, R.style.myDialog));
+
+                                  builder.setTitle("Attention");
+                                  builder.setMessage("Voulez-vous vraiment ajouter ce local ?");
+
+                                  builder.setPositiveButton("OUI", new DialogInterface.OnClickListener() {
+                                      public void onClick(DialogInterface dialog, int which) {
+                                          db.collection("rooms").add(room);
+                                          Toast.makeText(getApplicationContext(), "Ajout de local fait", Toast.LENGTH_SHORT).show();
+                                      }
+                                  });
+
+                                  builder.setNegativeButton("NON", new DialogInterface.OnClickListener() {
+                                      @Override
+                                      public void onClick(DialogInterface dialog, int which) {
+                                          dialog.cancel();
+                                      }
+                                  });
+
+                                  AlertDialog alert = builder.create();
+                                  alert.show();
                               } else {
                                   Toast.makeText(getApplicationContext(), "Local déjà existant", Toast.LENGTH_SHORT).show();
                               }
