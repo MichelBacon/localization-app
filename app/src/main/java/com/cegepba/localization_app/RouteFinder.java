@@ -90,7 +90,7 @@ public class RouteFinder {
                                             numberOfTimeNotGood += 1;
                                             firebaseCallback.onCallback(true, position, numberOfTimeNotGood);
                                         } else {
-                                            for(int i=0; i<sizeOfSubtractionOfRoadAndCurrentRoad;i++) {
+                                            for(int i=0; i<sizeOfSubtractionOfRoadAndCurrentRoad-1;i++) {
                                                 currentRoad.remove(i);
                                             }
                                             numberOfTimeNotGood = 0;
