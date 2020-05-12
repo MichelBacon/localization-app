@@ -64,7 +64,7 @@
         <EditText
             android:id="@+id/ytopLeft"
             android:layout_width="50dp"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:ems="10"
@@ -76,7 +76,7 @@
         <EditText
             android:id="@+id/xtopLeft"
             android:layout_width="50dp"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_marginTop="16dp"
             android:ems="10"
             android:hint="X"
@@ -87,7 +87,7 @@
         <EditText
             android:id="@+id/xtopRight"
             android:layout_width="50dp"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
             android:ems="10"
@@ -99,7 +99,7 @@
         <EditText
             android:id="@+id/ytopRight"
             android:layout_width="50dp"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_marginTop="16dp"
             android:ems="10"
             android:hint="Y"
@@ -110,7 +110,7 @@
         <EditText
             android:id="@+id/xbotLeft"
             android:layout_width="50dp"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_marginTop="28dp"
             android:ems="10"
             android:hint="X"
@@ -121,7 +121,7 @@
         <EditText
             android:id="@+id/ybotLeft"
             android:layout_width="50dp"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="28dp"
             android:ems="10"
@@ -133,7 +133,7 @@
         <EditText
             android:id="@+id/xbotRight"
             android:layout_width="50dp"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_marginTop="28dp"
             android:layout_marginEnd="8dp"
             android:ems="10"
@@ -147,7 +147,7 @@
         <EditText
             android:id="@+id/ybotRight"
             android:layout_width="50dp"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_marginTop="28dp"
             android:ems="10"
             android:hint="Y"

@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
     private void searchDataWithPositionOrNot(boolean isPosition, String query) {
         searchData(query, isPosition, new OnResultCallback() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(int listLength) {
                 updateSearchView();
                 progressBar.setVisibility(View.INVISIBLE);
             }
@@ -230,8 +230,12 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     searchData(localName, true, new OnResultCallback() {
                         @Override
-                        public void onSuccess() {
+                        public void onSuccess(int listLength) {
                             createMessage(R.string.msg_update_position);
+                            if(listLength == 1) {
+                                createAlertBoxForArrived();
+                                cancel.setVisible(false);
+                            }
                             progressBar.setVisibility(View.INVISIBLE);
                         }
 
@@ -261,6 +265,22 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder alert = new AlertDialog.Builder(new ContextThemeWrapper(MainActivity.this, R.style.myDialog));
         alert.setTitle(getResources().getString(R.string.msg_not_good_path));
         alert.setMessage("Vous êtes dans la mauvaise direction");
+        alert.setNeutralButton(android.R.string.ok,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = alert.create();
+        alert11.show();
+        progressBar.setVisibility(View.INVISIBLE);
+    }
+
+    private void createAlertBoxForArrived() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(new ContextThemeWrapper(MainActivity.this, R.style.myDialog));
+        alert.setTitle("Attention");
+        alert.setMessage("Vous êtes arrivé");
         alert.setNeutralButton(android.R.string.ok,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -323,7 +343,7 @@ public class MainActivity extends AppCompatActivity {
                                     } else {
                                         if(isPosition) {
                                             startNode = doc.getId();
-                                            onResultCallback.onSuccess();
+                                            onResultCallback.onSuccess(-1);
                                         } else {
                                             getRoadWhenHavingNewDestination(doc, onResultCallback);
                                         }
@@ -346,7 +366,7 @@ public class MainActivity extends AppCompatActivity {
             public void onCallback(int[][] list) {
                 map.setPositionList(list);
                 setButtonVisibile();
-                onResultCallback.onSuccess();
+                onResultCallback.onSuccess(list.length);
             }
 
             @Override
@@ -367,7 +387,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onCallback(int[][] list) {
                     map.setPositionList(list);
                     setButtonVisibile();
-                    onResultCallback.onSuccess();
+                    onResultCallback.onSuccess(list.length);
                 }
 
                 @Override
@@ -434,7 +454,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public interface OnResultCallback{
-        void onSuccess();
+        void onSuccess(int listSize);
         void onFailure(int numberOfTime);
     }
 
