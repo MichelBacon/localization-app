@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -33,6 +32,7 @@ public class Map extends View {
     //region private variable
     private Bitmap bitmapMap;
     private Bitmap bitmapUserPosition;
+    private Bitmap destinationPosition;
     private float mPositionX,mPositionY;
     private float refX,refY;
     private ScaleGestureDetector mScaleDetector;
@@ -61,7 +61,8 @@ public class Map extends View {
         super(context, attrs);
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.floors1);
-        bitmapUserPosition = BitmapFactory.decodeResource(getResources(), R.drawable.splash_logo);
+        bitmapUserPosition = BitmapFactory.decodeResource(getResources(), R.drawable.you);
+        destinationPosition = BitmapFactory.decodeResource(getResources(), R.drawable.splash_logo);
         RoomsManager roomsManager = new RoomsManager();
         roomsManager.setRoomsArray();
         rooms = roomsManager.getRooms();
@@ -132,9 +133,12 @@ public class Map extends View {
 
     private void drawTraject(Canvas canvas){
         int yPos;
+        int finalX = 0;
+        int buffer = 100;
         if(nodesToDraw != null) {
             for(int xPos = 0; xPos<nodesToDraw.length; xPos++) {
                 if(xPos+1 != nodesToDraw.length) {
+                    finalX = xPos+1;
                     yPos =0;
                     Paint paint = new Paint();
                     paint.setStrokeWidth(35);
@@ -148,6 +152,8 @@ public class Map extends View {
                     canvas.drawLine(nodesToDraw[xPos][yPos], nodesToDraw[xPos][yPos+1], nodesToDraw[xPos+1][yPos], nodesToDraw[xPos+1][yPos+1], paint);
                 }
             }
+            if(currentFloor == ActiveFloor)
+                canvas.drawBitmap(destinationPosition, null, new RectF(nodesToDraw[finalX][0]-buffer, nodesToDraw[finalX][1]-buffer, nodesToDraw[finalX][0]+buffer, nodesToDraw[finalX][1]+buffer), null);
         }
     }
 
