@@ -27,6 +27,7 @@ import com.estimote.mustard.rx_goodness.rx_requirements_wizard.Requirement;
 import com.estimote.mustard.rx_goodness.rx_requirements_wizard.RequirementsWizardFactory;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -39,6 +40,7 @@ import kotlin.jvm.functions.Function1;
 public class MainActivity extends AppCompatActivity {
     //region private variable
     private Button buttonFloors1, buttonFloors2, buttonFloors3, buttonFloors4, buttonFloors5;
+    private FirebaseAuth auth;
     private FirebaseFirestore db;
     private BeaconManager beaconManager;
     private SearchView searchView;
@@ -55,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         map = findViewById(R.id.map);
         db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
+        auth.signOut();
 
         rf = new RouteFinder();
 
