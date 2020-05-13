@@ -206,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.nav_cancel_traject:
                 map.cancelTraject();
+                updatePosition.setVisible(false);
                 cancel.setVisible(false);
                 createMessage(R.string.msg_trajet_annule);
                 return true;
@@ -307,6 +308,7 @@ public class MainActivity extends AppCompatActivity {
 
             public void onClick(DialogInterface dialog, int which) {
                 map.cancelTraject();
+                updatePosition.setVisible(false);
                 cancel.setVisible(false);
             }
         });
