@@ -40,7 +40,6 @@ import kotlin.jvm.functions.Function1;
 public class MainActivity extends AppCompatActivity {
     //region private variable
     private Button buttonFloors1, buttonFloors2, buttonFloors3, buttonFloors4, buttonFloors5;
-    private FirebaseAuth auth;
     private FirebaseFirestore db;
     private BeaconManager beaconManager;
     private SearchView searchView;
@@ -57,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         map = findViewById(R.id.map);
         db = FirebaseFirestore.getInstance();
-        auth = FirebaseAuth.getInstance();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
         auth.signOut();
 
         rf = new RouteFinder();
@@ -68,11 +67,33 @@ public class MainActivity extends AppCompatActivity {
         buttonFloors4 = findViewById(R.id.btnFloor4);
         buttonFloors5 = findViewById(R.id.btnFloor5);
         progressBar = findViewById(R.id.progressBar);
+
         setListener1();
         setListener2();
         setListener3();
         setListener4();
         setListener5();
+
+        estimoteRequirements();
+
+        createMessageEnterPosition();
+    }
+
+    private void createMessageEnterPosition() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(new ContextThemeWrapper(MainActivity.this, R.style.myDialog));
+        alert.setTitle(getResources().getString(R.string.enteryourposition));
+        alert.setNeutralButton(android.R.string.ok,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = alert.create();
+        alert11.show();
+    }
+
+    private void estimoteRequirements() {
         RequirementsWizardFactory
                 .createEstimoteRequirementsWizard()
                 .fulfillRequirements(this,
@@ -98,20 +119,6 @@ public class MainActivity extends AppCompatActivity {
                                 return null;
                             }
                         });
-
-        RouteFinder rf = new RouteFinder();
-
-        AlertDialog.Builder alert = new AlertDialog.Builder(new ContextThemeWrapper(MainActivity.this, R.style.myDialog));
-        alert.setTitle(getResources().getString(R.string.enteryourposition));
-        alert.setNeutralButton(android.R.string.ok,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-
-        AlertDialog alert11 = alert.create();
-        alert11.show();
     }
 
     private void startProximityContentManager() {
@@ -131,9 +138,8 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.drawer_menu, menu);
         cancel = menu.findItem(R.id.nav_cancel_traject);
-        cancel.setVisible(false);
         updatePosition = menu.findItem(R.id.nav_update_position);
-        updatePosition.setVisible(false);
+        setButtonInvisible();
         MenuItem item = menu.findItem(R.id.action_search);
         searchView = (SearchView) MenuItemCompat.getActionView(item);
         searchView.setQueryHint(getResources().getString(R.string.position));
@@ -206,19 +212,18 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.nav_cancel_traject:
                 map.cancelTraject();
-                updatePosition.setVisible(false);
-                cancel.setVisible(false);
+                setButtonInvisible();
                 createMessage(R.string.msg_trajet_annule);
                 return true;
             case R.id.nav_update_position:
-                createAlertMessage();
+                createAlertMessageUpdatePosition();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    private void createAlertMessage() {
+    private void createAlertMessageUpdatePosition() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         final EditText edittext = new EditText(this);
         alert.setTitle("Mettre à jour la position");
@@ -238,8 +243,8 @@ public class MainActivity extends AppCompatActivity {
                         public void onSuccess(int listLength) {
                             createMessage(R.string.msg_update_position);
                             if(listLength == 1) {
-                                createAlertBoxForArrived();
-                                cancel.setVisible(false);
+                                createAlertBoxForRedirectionOrArrived("Attention", "Vous êtes arrivé");
+                                setButtonInvisible();
                             }
                             progressBar.setVisibility(View.INVISIBLE);
                         }
@@ -247,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(int numberOfTime) {
                             if(numberOfTime == 1) {
-                                createAlertBoxForRedirection();
+                                createAlertBoxForRedirectionOrArrived(getResources().getString(R.string.msg_not_good_path),"Vous êtes dans la mauvaise direction");
                             } else if(numberOfTime > 1) {
                                 createAlertBoxForAnotherRedirectionToCancel();
                             } else {
@@ -266,26 +271,10 @@ public class MainActivity extends AppCompatActivity {
         alert.show();
     }
 
-    private void createAlertBoxForRedirection() {
+    private void createAlertBoxForRedirectionOrArrived(String title, String message) {
         AlertDialog.Builder alert = new AlertDialog.Builder(new ContextThemeWrapper(MainActivity.this, R.style.myDialog));
-        alert.setTitle(getResources().getString(R.string.msg_not_good_path));
-        alert.setMessage("Vous êtes dans la mauvaise direction");
-        alert.setNeutralButton(android.R.string.ok,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-
-        AlertDialog alert11 = alert.create();
-        alert11.show();
-        progressBar.setVisibility(View.INVISIBLE);
-    }
-
-    private void createAlertBoxForArrived() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(new ContextThemeWrapper(MainActivity.this, R.style.myDialog));
-        alert.setTitle("Attention");
-        alert.setMessage("Vous êtes arrivé");
+        alert.setTitle(title);
+        alert.setMessage(message);
         alert.setNeutralButton(android.R.string.ok,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -308,8 +297,7 @@ public class MainActivity extends AppCompatActivity {
 
             public void onClick(DialogInterface dialog, int which) {
                 map.cancelTraject();
-                updatePosition.setVisible(false);
-                cancel.setVisible(false);
+                setButtonInvisible();
             }
         });
 
@@ -407,6 +395,11 @@ public class MainActivity extends AppCompatActivity {
         cancel.setVisible(true);
     }
 
+    private void setButtonInvisible() {
+        updatePosition.setVisible(false);
+        cancel.setVisible(false);
+    }
+
     private void showActivity(Class className) {
         Intent myIntent = new Intent(MainActivity.this, className);
         startActivity(myIntent);
@@ -467,8 +460,5 @@ public class MainActivity extends AppCompatActivity {
     private void createMessage(int msg){
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
-    private void createMessage(String msg){
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-    }
-    //endregion chan chan
+    //endregion change floor
 }

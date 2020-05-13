@@ -20,18 +20,13 @@ public class SplashScreen extends Activity implements Runnable {
 
     @Override
     public void run() {
-        try
-        {
+        try {
             Thread.sleep(1000);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        finally
-        {
+        finally {
             startActivity(new Intent(SplashScreen.this, MainActivity.class));
-
             finish();
         }
     }

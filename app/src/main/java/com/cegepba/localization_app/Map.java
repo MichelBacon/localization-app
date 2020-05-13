@@ -23,10 +23,6 @@ import com.cegepba.localization_app.Model.Room;
 
 import java.util.ArrayList;
 
-//import com.hazem.coloringforkids.commom.Common;
-//import com.hazem.coloringforkids.utils.FloodFill;
-
-
 public class Map extends View {
 
     //region private variable
@@ -57,6 +53,7 @@ public class Map extends View {
     public Map(Context context) {
         super(context);
     }
+
     public Map(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
@@ -254,6 +251,7 @@ public class Map extends View {
         nodesToDraw[1][1] = oldUserPosition[1];
         nodesToDraw[1][2] = 1;
     }
+
     private boolean clickPositionIsInAClass(float clickPositionX, float clickPositionY, Room room) {
         return clickPositionXIsBetweenFirebasePosition(clickPositionX, room) && clickPositionYIsBetweenFirebasePosition(clickPositionY, room);
     }
