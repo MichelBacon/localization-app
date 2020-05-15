@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -24,15 +23,12 @@ import com.cegepba.localization_app.Model.Room;
 
 import java.util.ArrayList;
 
-//import com.hazem.coloringforkids.commom.Common;
-//import com.hazem.coloringforkids.utils.FloodFill;
-
-
 public class Map extends View {
 
     //region private variable
     private Bitmap bitmapMap;
     private Bitmap bitmapUserPosition;
+    private Bitmap destinationPosition;
     private float mPositionX,mPositionY;
     private float refX,refY;
     private ScaleGestureDetector mScaleDetector;
@@ -57,11 +53,13 @@ public class Map extends View {
     public Map(Context context) {
         super(context);
     }
+
     public Map(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         bitmapMap = BitmapFactory.decodeResource(getResources(), R.drawable.floors1);
-        bitmapUserPosition = BitmapFactory.decodeResource(getResources(), R.drawable.splash_logo);
+        bitmapUserPosition = BitmapFactory.decodeResource(getResources(), R.drawable.you);
+        destinationPosition = BitmapFactory.decodeResource(getResources(), R.drawable.splash_logo);
         RoomsManager roomsManager = new RoomsManager();
         roomsManager.setRoomsArray();
         rooms = roomsManager.getRooms();
@@ -115,6 +113,7 @@ public class Map extends View {
         drawObject(canvas);
         canvas.restore();
         drawText(canvas);
+        invalidate();
     }
 
     private void drawObject(Canvas canvas) {
@@ -131,9 +130,12 @@ public class Map extends View {
 
     private void drawTraject(Canvas canvas){
         int yPos;
+        int finalX = 0;
+        int buffer = 100;
         if(nodesToDraw != null) {
             for(int xPos = 0; xPos<nodesToDraw.length; xPos++) {
                 if(xPos+1 != nodesToDraw.length) {
+                    finalX = xPos+1;
                     yPos =0;
                     Paint paint = new Paint();
                     paint.setStrokeWidth(35);
@@ -147,6 +149,8 @@ public class Map extends View {
                     canvas.drawLine(nodesToDraw[xPos][yPos], nodesToDraw[xPos][yPos+1], nodesToDraw[xPos+1][yPos], nodesToDraw[xPos+1][yPos+1], paint);
                 }
             }
+            if(currentFloor == ActiveFloor)
+                canvas.drawBitmap(destinationPosition, null, new RectF(nodesToDraw[finalX][0]-buffer, nodesToDraw[finalX][1]-buffer, nodesToDraw[finalX][0]+buffer, nodesToDraw[finalX][1]+buffer), null);
         }
     }
 
@@ -171,7 +175,6 @@ public class Map extends View {
             canvas.drawBitmap(bitmapUserPosition, null, new RectF(nodesToDraw[0][0]-buffer, nodesToDraw[0][1]-buffer, nodesToDraw[0][0]+buffer, nodesToDraw[0][1]+buffer), null);
         }
     }
-
     //endregion
 
     final GestureDetector gestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
@@ -235,6 +238,18 @@ public class Map extends View {
             position += delta;
         }
         return position;
+    }
+    public void cancelTraject() {
+        int[] oldUserPosition = new int[2];
+        oldUserPosition[0] = nodesToDraw[0][0];
+        oldUserPosition[1] = nodesToDraw[0][1];
+        nodesToDraw = new int[2][3];
+        nodesToDraw[0][0] = oldUserPosition[0];
+        nodesToDraw[0][1] = oldUserPosition[1];
+        nodesToDraw[0][2] = 1;
+        nodesToDraw[1][0] = oldUserPosition[0];
+        nodesToDraw[1][1] = oldUserPosition[1];
+        nodesToDraw[1][2] = 1;
     }
 
     private boolean clickPositionIsInAClass(float clickPositionX, float clickPositionY, Room room) {

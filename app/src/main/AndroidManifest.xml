@@ -10,8 +10,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Manager.AdminManager"></activity>
-        <activity android:name=".Manager.LoginAdminManager" />
+        <activity android:name=".Manager.AdminManager"
+            android:parentActivityName=".Manager.InfoManager"></activity>
+        <activity android:name=".Manager.LoginAdminManager"
+            android:parentActivityName=".Manager.InfoManager"/>
         <activity
             android:name=".SplashScreen"
             android:theme="@style/AppTheme.NoActionBar">

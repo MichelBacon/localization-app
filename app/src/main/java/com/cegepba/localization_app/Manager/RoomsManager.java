@@ -23,8 +23,6 @@ public class RoomsManager {
         firebaseFirestore = FirebaseFirestore.getInstance();
     }
 
-    //TODO know how to structure better the code with firebase
-
     public void setRoomsArray() {
         rooms = new ArrayList<>();
 

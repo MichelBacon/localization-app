@@ -1,12 +1,18 @@
 package com.cegepba.localization_app.Manager;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.cegepba.localization_app.MainActivity;
 import com.cegepba.localization_app.Model.Room;
 import com.cegepba.localization_app.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -73,28 +79,28 @@ public class AdminManager extends AppCompatActivity {
             floor = Integer.parseInt(edit_floor.getText().toString());
         }
         if(!edit_xTR.getText().toString().equals("")) {
-             xTR = Integer.parseInt(edit_xTR.getText().toString());
+            xTR = Integer.parseInt(edit_xTR.getText().toString())*-1;
         }
         if(!edit_xTL.getText().toString().equals("")) {
-            xTL = Integer.parseInt(edit_xTL.getText().toString());
+            xTL = Integer.parseInt(edit_xTL.getText().toString())*-1;
         }
         if(!edit_xBR.getText().toString().equals("")) {
-            xBR = Integer.parseInt(edit_xTL.getText().toString());
+            xBR = Integer.parseInt(edit_xBR.getText().toString())*-1;
         }
         if(!edit_xBL.getText().toString().equals("")) {
-            xBL = Integer.parseInt(edit_xBL.getText().toString());
+            xBL = Integer.parseInt(edit_xBL.getText().toString())*-1;
         }
         if(!edit_yTR.getText().toString().equals("")) {
-            yTR = Integer.parseInt(edit_yTR.getText().toString());
+            yTR = Integer.parseInt(edit_yTR.getText().toString())*-1;
         }
         if(!edit_yTL.getText().toString().equals("")) {
-            yTL = Integer.parseInt(edit_yTL.getText().toString());
+            yTL = Integer.parseInt(edit_yTL.getText().toString())*-1;
         }
         if(!edit_yBR.getText().toString().equals("")) {
-            yBR = Integer.parseInt(edit_yBR.getText().toString());
+            yBR = Integer.parseInt(edit_yBR.getText().toString())*-1;
         }
         if(!edit_yBL.getText().toString().equals("")) {
-            yBL = Integer.parseInt(edit_yBL.getText().toString());
+            yBL = Integer.parseInt(edit_yBL.getText().toString())*-1;
         }
 
         final Room room = new Room(null, name, floor, description,xBL,xBR,xTL,xTR,yTL,yTR,yBL,yBR);
@@ -105,8 +111,27 @@ public class AdminManager extends AppCompatActivity {
                       public void onComplete(@NonNull Task<QuerySnapshot> task) {
                           if(task.getResult() != null){
                               if(task.getResult().isEmpty()) {
-                                  db.collection("rooms").add(room);
-                                  Toast.makeText(getApplicationContext(), "Ajout de local fait", Toast.LENGTH_SHORT).show();
+                                  AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(AdminManager.this, R.style.myDialog));
+
+                                  builder.setTitle("Attention");
+                                  builder.setMessage("Voulez-vous vraiment ajouter ce local ?");
+
+                                  builder.setPositiveButton("OUI", new DialogInterface.OnClickListener() {
+                                      public void onClick(DialogInterface dialog, int which) {
+                                          db.collection("rooms").add(room);
+                                          Toast.makeText(getApplicationContext(), "Ajout de local fait", Toast.LENGTH_SHORT).show();
+                                      }
+                                  });
+
+                                  builder.setNegativeButton("NON", new DialogInterface.OnClickListener() {
+                                      @Override
+                                      public void onClick(DialogInterface dialog, int which) {
+                                          dialog.cancel();
+                                      }
+                                  });
+
+                                  AlertDialog alert = builder.create();
+                                  alert.show();
                               } else {
                                   Toast.makeText(getApplicationContext(), "Local déjà existant", Toast.LENGTH_SHORT).show();
                               }

@@ -53,8 +53,6 @@ public class PopManager extends Activity {
     }
 
     private void setTextView() {
-        //TODO add loading bar (spinner)
-
         roomName.setText(room.getName());
         descriptionText.setText(room.getDescription());
     }
