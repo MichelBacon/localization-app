@@ -78,16 +78,15 @@ public class Map extends View {
             final float scale = detector.getScaleFactor();
             mScaleFactor = Math.max(mMinZoom, Math.min(mScaleFactor * scale, mMaxZoom));
 
-                // 1 Grabbing
                 final float centerX = detector.getFocusX();
                 final float centerY = detector.getFocusY();
-                // 2 Calculating difference
+
                 float diffX = centerX - mPositionX;
                 float diffY = centerY - mPositionY;
-                // 3 Scaling difference
+
                 diffX = diffX * scale - diffX;
                 diffY = diffY * scale - diffY;
-                // 4 Updating image origin
+
                 if (mScaleFactor < mMaxZoom && mScaleFactor > mMinZoom) {
                     if (mPositionX > -canvasWidth && mPositionX < 0) {
                         mPositionX -= diffX;
@@ -170,7 +169,6 @@ public class Map extends View {
 
     private void drawUserPositionBitmap(Canvas canvas) {
         int buffer = 100;
-        //TODO position bitmap = position user
         if(nodesToDraw != null) {
             canvas.drawBitmap(bitmapUserPosition, null, new RectF(nodesToDraw[0][0]-buffer, nodesToDraw[0][1]-buffer, nodesToDraw[0][0]+buffer, nodesToDraw[0][1]+buffer), null);
         }

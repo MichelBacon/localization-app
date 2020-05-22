@@ -29,16 +29,6 @@ public class RouteFinder {
         nodes = new HashMap<>();
         db = FirebaseFirestore.getInstance();
 
-        //FirestoreRepository repo = new FirestoreRepository();
-
-        /*repo.getNodeWithConnection().addOnCompleteListener(new OnCompleteListener<List<Node>>() {
-            @Override
-            public void onComplete(@NonNull Task<List<Node>> task) {
-                for (Node nodeInList: task.getResult()) {
-                    Log.d("TEST123", nodeInList.toString());
-                }
-            }
-        });*/
     }
 
     public void getRoad(final String startNode, final String destinationNode, final boolean isAnUpdate, final FirebaseCallback firebaseCallback) {
